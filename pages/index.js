@@ -61,7 +61,7 @@ function MyTitle(props) {
 			display: 'flex', alignItems: 'center', justifyContent: 'center',
 			// backgroundColor: appConfig.theme.colors.primary[500],
 			backgroundImage: 'url(https://i.imgur.com/tNAIOA8.png)',
-			backgroundRepeat: 'no-repeat', backgroundSize: 'cover', backgroundBlendMode: 'multiply',
+			backgroundRepeat: 'no-repeat', backgroundSize: 'auto', backgroundBlendMode: 'multiply',
 		  }}
 		>
 		  <Box
@@ -74,8 +74,8 @@ function MyTitle(props) {
 				sm: 'row',
 			  },
 			  width: '100%', maxWidth: '600px',
-			  borderRadius: '5px', padding: '32px', margin: '16px',
-			  boxShadow: '0 2px 10px 0 rgb(0 0 0 / 20%)',
+			  borderRadius: '20px', padding: '32px', margin: '16px',
+			  boxShadow: '0 2px 10px 0 rgb(36, 38, 66 / 20%)',
 			  backgroundColor: '#3F4273',
 			}}
 		  >
@@ -93,13 +93,13 @@ function MyTitle(props) {
 						<Text variant="body3" styleSheet={{ marginBottom: '32px', color: appConfig.theme.colors.neutrals[300], display: 'inline-block', gridArea: 'text2'}}>
 							{appConfig.name}
 						</Text>
-						<img src='https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/75eafe9f-a87c-45fa-b6bb-328c9e7b76f9/deyumur-34eb2502-488a-42a1-9ef3-3eedccf1fc63.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzc1ZWFmZTlmLWE4N2MtNDVmYS1iNmJiLTMyOGM5ZTdiNzZmOVwvZGV5dW11ci0zNGViMjUwMi00ODhhLTQyYTEtOWVmMy0zZWVkY2NmMWZjNjMucG5nIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.n59I7aiRrOwTTZZPnXRTrrfXFNTt0sYOQwGugYwdkBM'/>
+						<img src='https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/75eafe9f-a87c-45fa-b6bb-328c9e7b76f9/deyumur-e1981004-b918-4d23-a31a-2d100890d99e.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzc1ZWFmZTlmLWE4N2MtNDVmYS1iNmJiLTMyOGM5ZTdiNzZmOVwvZGV5dW11ci1lMTk4MTAwNC1iOTE4LTRkMjMtYTMxYS0yZDEwMDg5MGQ5OWUucG5nIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.VDKWvXzTLceHc_32HT_0gfKyB2t-eiSB5A7HML04cVs'/>
 					</div>
 				<style jsx>{`
 					.box-subtitle-title-and-img{
 						display: grid;
-						grid-template-columns: 180px 90px;
-						grid-template-rows: 40px 50px;
+						grid-template-columns: 180px 100px;
+						grid-template-rows: 50px 50px;
 						grid-template-areas: "text img"
 											 "text2 img";
 						align-items: center;
@@ -107,8 +107,8 @@ function MyTitle(props) {
 					img{
 						display: inline; 
 						width: 100%; 
-						max-width: 100px;
-						margin: 10px 0;
+						max-width: 70px;
+						margin-top: 20px;
 					}
 				`}</style>
 			  </div>
@@ -124,7 +124,7 @@ function MyTitle(props) {
 				  },
 				}}
 				styleSheet={{
-					marginBottom: '8px',
+					marginBottom: '8px'
 				}}
 			  />
 			  
@@ -137,6 +137,10 @@ function MyTitle(props) {
 				  mainColor: '#2947A3',
 				  mainColorLight: appConfig.theme.colors.primary[400],
 				  mainColorStrong: '#101D41',
+				}}
+				styleSheet={{
+					borderRadius: '15px',
+					border: 'solid 2px rgb(36, 38, 66 / 20%)'
 				}}
 			  />
 			</Box>
@@ -154,7 +158,7 @@ function MyTitle(props) {
 				backgroundColor: '#242642',
 				border: '1px solid',
 				borderColor: appConfig.theme.colors.neutrals[999],
-				borderRadius: '10px',
+				borderRadius: '20px',
 				flex: 1,
 				minHeight: '240px',
 			  }}
