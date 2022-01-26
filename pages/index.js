@@ -1,36 +1,7 @@
 import { Box, Button, Text, TextField, Image } from '@skynexui/components';
 import appConfig from "../config.json";
-
-
-function GlobalStyle(props){
-	return (
-		<style global jsx>{`
-		* {
-			margin: 0;
-			padding: 0;
-			box-sizing: border-box;
-			list-style: none;
-		  }
-		  body {
-			font-family: 'Open Sans', sans-serif;
-		  }
-		  /* App fit Height */ 
-		  html, body, #__next {
-			min-height: 100vh;
-			display: flex;
-			flex: 1;
-		  }
-		  #__next {
-			flex: 1;
-		  }
-		  #__next > * {
-			flex: 1;
-		  }
-		  /* ./App fit Height */ 
-		`}</style>
-	);
-}
-
+import React from 'react'
+import {useRouter} from 'next/router'
 
 function MyTitle(props) {
 	const Tag = props.tag || 'h1';
@@ -50,12 +21,11 @@ function MyTitle(props) {
 	);
   }
   
-  export default function HomePage() {
-	const username = 'cecilia-brito';
-  
+export default function HomePage() {
+	const [username, setUsername] = React.useState('cecilia-brito');
+	const routering = useRouter()
 	return (
 	  <>
-		<GlobalStyle />
 		<Box
 		  styleSheet={{
 			display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -73,15 +43,23 @@ function MyTitle(props) {
 				xs: 'column',
 				sm: 'row',
 			  },
-			  width: '100%', maxWidth: '600px',
-			  borderRadius: '20px', padding: '32px', margin: '16px',
-			  boxShadow: '0 2px 10px 0 rgb(36, 38, 66 / 20%)',
-			  backgroundColor: '#3F4273',
+				width: '100%', maxWidth: '600px',
+				borderRadius: '20px', padding: '32px', margin: '16px',
+				boxShadow: '0 2px 10px 0 rgb(36, 38, 66 / 20%)',
+				backgroundColor: '#3F4273',
 			}}
 		  >
 			{/* Formulário */}
 			<Box
 			  as="form"
+			  onSubmit= {
+				  function clicked(event){
+					  console.log('fui clicado')
+						event.preventDefault()
+						//mudando de página
+						routering.push('/chat')
+				  }
+			  }
 			  styleSheet={{
 				display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
 				width: { xs: '100%', sm: '50%' }, textAlign: 'center', marginBottom: '32px',
@@ -126,6 +104,11 @@ function MyTitle(props) {
 				styleSheet={{
 					marginBottom: '8px'
 				}}
+				onChange={ function changeWhatItWasTyped(event){
+					const newInput = event.target.value
+					setUsername(newInput)
+				}
+				}
 			  />
 			  
 			  <Button
@@ -187,4 +170,4 @@ function MyTitle(props) {
 		</Box>
 	  </>
 	);
-  }
+}
