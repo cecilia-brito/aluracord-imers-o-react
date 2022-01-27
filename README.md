@@ -26,7 +26,7 @@ Tabela de conteúdos
 $ git clone https://github.com/cecilia-brito/calculator
 
 # Acesse a pasta do projeto no terminal/cmd
-$ cd aluracor_she-ra
+$ cd aluracord_she-ra
 
 # Instale as dependências
 $ npm install next react react-dom
