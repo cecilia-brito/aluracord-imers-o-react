@@ -22,8 +22,29 @@ function MyTitle(props) {
   }
   
 export default function HomePage() {
-	const [username, setUsername] = React.useState('cecilia-brito');
+	const [username, setUsername] = React.useState('');
 	const routering = useRouter()
+
+	const [visible, setVisible] = React.useState('hidden')
+	const [link, setLink] = React.useState(`https://github.com/${username}.png`)
+	function SetInvalidUserName(props){
+		return(
+			<span>
+				<p>Nome de usuário inválido, não é possível buscar a foto</p>
+				<style jsx>{`
+					p{
+						font-family: sans-serif;
+						font-size: 10.5px;
+						visibility: ${props.visible};
+						color: red;
+						margin-bottom: 2px;
+						margin-top: 2px;
+					}
+				`}</style>
+			</span>
+		)
+	}
+
 	return (
 	  <>
 		<Box
@@ -101,16 +122,21 @@ export default function HomePage() {
 					backgroundColor: '#242642',
 				  },
 				}}
-				styleSheet={{
-					marginBottom: '8px'
-				}}
 				onChange={ function changeWhatItWasTyped(event){
 					const newInput = event.target.value
-					setUsername(newInput)
+					if(newInput.length >= 2){
+						setUsername(newInput)
+						setVisible('hidden')
+						setLink(`https://github.com/${newInput}.png`)
+					} else{
+						setUsername('')
+						setVisible('visible')
+						setLink('https://i.pinimg.com/originals/d3/82/6a/d3826a943b0d3a9d54ec3d3cba01d0ef.png')
+					}
 				}
 				}
 			  />
-			  
+			  <SetInvalidUserName visible= {visible}></SetInvalidUserName>
 			  <Button
 				type='submit'
 				label='Entrar'
@@ -151,7 +177,7 @@ export default function HomePage() {
 				  borderRadius: '50%',
 				  marginBottom: '16px',
 				}}
-				src={`https://github.com/${username}.png`}
+				src={link}
 			  />
 			  <Text
 				variant="body4"
