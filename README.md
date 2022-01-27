@@ -30,6 +30,7 @@ $ cd aluracor_she-ra
 
 # Instale as dependências
 $ npm install next react react-dom
+$ npm install @skynexui/components
 
 #Rode o projeto localmente
 $ npm run dev
