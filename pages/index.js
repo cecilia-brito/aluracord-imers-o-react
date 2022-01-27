@@ -31,7 +31,7 @@ export default function HomePage() {
 
 	const [username, setUsername] = React.useState('');
 	const routering = useRouter()
-	const [visibilityBoxs, setVisibilityBox] = React.useState('hidden');
+	const [visibilityBoxs, setVisibilityBox] = React.useState('none');
 	const invalidFriends = 'https://i.pinimg.com/originals/d3/82/6a/d3826a943b0d3a9d54ec3d3cba01d0ef.png'
 	const [visible, setVisible] = React.useState('hidden')
 	const [link, setLink] = React.useState(`https://github.com/${username}.png`)
@@ -68,7 +68,7 @@ export default function HomePage() {
 				border-left: solid 4px rgba(242, 201, 204, .7);
 				border-right: solid 4px rgba(242, 201, 204, .7);
 				margin-bottom: 10px;
-				visibility: ${props.visibility};
+				display: ${props.visibility};
 			}
 		`}</style>
 		</div>
