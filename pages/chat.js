@@ -5,6 +5,36 @@ import appConfig from '../config.json';
 export default function ChatPage() {
     const [message, setMessage] = React.useState('');
     const [messagesList, setMessagesList] = React.useState([]);
+    function ButtonSend(){
+        return(
+            <>
+                <button type='button' onClick={
+                            () => {
+                                handleNewMessage(message)
+                            }
+                        }>
+                    <img src='https://icons.veryicon.com/png/o/object/lucq-backstage/send-out.png' width='50' height='50'/>
+                </button>
+                <style jsx>{`
+                    button{
+                        background: transparent;
+                        border: none;
+                        cursor: pointer;
+                        display: flex;
+                        align-items: center;
+                        margin-bottom: 10px;
+                    }
+                    button:hover{
+                        transform: scale(1.10);
+                    }
+                    button img{
+                        filter: invert(100%);
+                        opacity: 90%;
+                    }
+		        `}</style>
+            </>
+        )
+    }
 
     function handleNewMessage(newMessage) {
         const message = {
@@ -12,7 +42,7 @@ export default function ChatPage() {
             text: newMessage,
             whoSended: 'cecilia-brito'
         }
-        setMessagesList([...messagesList, message])
+        setMessagesList([message, ...messagesList])
         setMessage('')
     }
 
@@ -53,7 +83,7 @@ export default function ChatPage() {
                         padding: '16px',
                     }}
                 >
-                <MessageList messages = {messagesList} />
+                <MessageList messages = {messagesList} set={setMessagesList} />
 
                     <Box
                         as="form"
@@ -62,6 +92,13 @@ export default function ChatPage() {
                             alignItems: 'center',
                         }}
                     >
+                    <Box styleSheet={{
+                        backgroundColor: '#424676',
+                        width: '100%',
+                        display: 'flex',
+                        borderRadius: '5px',
+                        padding: '2px'
+                    }}>
                         <TextField
                             value = {message}
                             onChange={
@@ -91,7 +128,10 @@ export default function ChatPage() {
                                 marginRight: '12px',
                                 color: 'rgba(255, 255, 255, 0.7)',
                             }}
-                        />
+                        >
+                        </TextField>
+                        <ButtonSend></ButtonSend>
+                    </Box>
                     </Box>
                 </Box>
             </Box>
@@ -118,7 +158,56 @@ function Header() {
 }
 
 function MessageList(props) {
-    console.log(props)
+    function DeleteButton(){
+        return (
+            <div>
+                <button onClick={
+                 deleteMessage
+                }> 
+                    x
+                </button>
+                <style jsx>{`
+                    @import url('https://fonts.googleapis.com/css2?family=Dongle&display=swap');
+                    div{
+                        display: inline-block;
+                        margin: 10px;
+                    }
+                    button{
+                        border: none;
+                        background: transparent;
+                        font-family: 'Dongle', sans-serif;
+                        color: rgba(255, 255, 255, 0.5);
+                        font-size: 32px;
+                        display: inline-block;
+                    }
+                    button:hover{
+                        transform: scale(1.2);
+                    }
+                `}</style>
+            </div>
+        )
+        
+}
+
+function deleteMessage(){
+    console.log('fui clicado')
+    if(props.messages !== undefined){
+        console.log('fui clicado e mensagens não é undefined')
+        props.messages.filter(
+         () => {
+             if(props.messages.id == event.target.parentElement.parentElement.key){
+                console.log('deu certo!')
+                const newListMessage = props.messages;
+                 const index = props.messages.indexOf(newListMessage)
+                 newListMessage.splice(index)
+                 event.target.parentElement.parentElement.remove()
+                 props.set(newListMessage)
+                 console.log(props.messages)
+             }
+         }
+     )
+    }
+}
     return (
         <Box
             tag="ul"
@@ -135,55 +224,70 @@ function MessageList(props) {
             {props.messages.map(
                 (actualMessage) => {
                     return (
-                        <Text
-                            key= {actualMessage.id}
-                            tag="li"
-                            styleSheet={{
-                                borderRadius: '5px',
-                                padding: '6px',
-                                marginBottom: '12px',
-                                hover: {
-                                    backgroundColor: '#161727'
-                                },
-                            }}
-                        >
-                            <Box
+                        <Box styleSheet={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            width: '100%',
+                            hover: {
+                                backgroundColor: '#161727'
+                            },
+                            marginBottom: '12px',
+                        }}>
+                            <Text
+                                key= {actualMessage.id}
+                                tag="li"
                                 styleSheet={{
-                                    marginBottom: '8px',
+                                    borderRadius: '5px',
+                                    padding: '6px'
                                 }}
                             >
-                            <div>
-                                <Image
+                                <Box
                                     styleSheet={{
-                                        width: '20px',
-                                        height: '20px',
-                                        borderRadius: '50%',
-                                        display: 'inline-block',
-                                        marginRight: '8px',
+                                        marginBottom: '8px',
                                     }}
-                                    src={`https://github.com/cecilia-brito.png`}
-                                />
-                                <Text tag="strong" styleSheet={{
-                                     display: 'inline-block'
-                                }}>
-                                    {actualMessage.whoSended}
-                                </Text>
-                                <Text
-                                    styleSheet={{
-                                        fontSize: '10px',
-                                        marginLeft: '8px',
-                                        color: appConfig.theme.colors.neutrals[300],
-                                        display: 'inline-block'
-                                    }}
-                                    tag="span"
                                 >
-                                    {(new Date().toLocaleDateString())}
-                                </Text>
-                            </div>
-                            </Box>
-                            {actualMessage.text}
-                            {console.log(actualMessage.text)}
-                        </Text>
+                                <div>
+                                    <Image
+                                        styleSheet={{
+                                            width: '20px',
+                                            height: '20px',
+                                            borderRadius: '50%',
+                                            display: 'inline-block',
+                                            marginRight: '8px',
+                                        }}
+                                        src={`https://github.com/cecilia-brito.png`}
+                                    />
+                                    <Text tag="strong" styleSheet={{
+                                        display: 'inline-block'
+                                    }}>
+                                        {actualMessage.whoSended}
+                                    </Text>
+                                    <Text
+                                        styleSheet={{
+                                            fontSize: '10px',
+                                            marginLeft: '8px',
+                                            color: appConfig.theme.colors.neutrals[300],
+                                            display: 'inline-block'
+                                        }}
+                                        tag="span"
+                                    >
+                                        {(new Date().toLocaleDateString())}
+                                    </Text>
+                                </div>
+                                </Box>
+                                {actualMessage.text}
+                                {console.log(actualMessage.text)}
+                            </Text>
+                             {/* <style jsx>{`
+                                  boxPerfil{
+                                     display: flex;
+                                     width: 100%;
+                                     justifycontent: space-between;
+                                     
+                                 }  
+                             `}</style> */}
+                            <DeleteButton></DeleteButton>
+                     </Box>
                     )
                 })
             }

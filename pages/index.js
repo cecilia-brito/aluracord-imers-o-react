@@ -16,7 +16,7 @@ function MyTitle(props) {
 				  display: inline-block;
 				  grid-area: text;
 			  }
-			  `}</style>
+		`}</style>
 	  </>
 	);
   }
@@ -37,8 +37,8 @@ export default function HomePage() {
 						font-size: 10.5px;
 						visibility: ${props.visible};
 						color: red;
-						margin-bottom: 2px;
-						margin-top: 2px;
+						margin: 2px auto;
+						opacity: 80%;
 					}
 				`}</style>
 			</span>
