@@ -274,21 +274,13 @@ function deleteMessage(){
                                         }}
                                         tag="span"
                                     >
-                                        {(new Date().toLocaleDateString())}
+                                        {(new Date().toLocaleDateString() + ' - ' + new Date().getHours() + ' : ' + new Date().getMinutes())}
                                     </Text>
                                 </div>
                                 </Box>
                                 {actualMessage.text}
                                 {console.log(actualMessage.text)}
                             </Text>
-                             {/* <style jsx>{`
-                                  boxPerfil{
-                                     display: flex;
-                                     width: 100%;
-                                     justifycontent: space-between;
-                                     
-                                 }  
-                             `}</style> */}
                             <DeleteButton></DeleteButton>
                      </Box>
                     )
