@@ -23,9 +23,11 @@ export default function ChatPage() {
                         display: flex;
                         align-items: center;
                         margin-bottom: 10px;
+                        transition: 0.05s all;
                     }
                     button:hover{
-                        transform: scale(1.10);
+                        transform: scale(1.05);
+                        opacity: 70%;
                     }
                     button img{
                         filter: invert(100%);
@@ -42,8 +44,10 @@ export default function ChatPage() {
             text: newMessage,
             whoSended: 'cecilia-brito'
         }
-        setMessagesList([message, ...messagesList])
-        setMessage('')
+        if(message.text !== ''){
+            setMessagesList([message, ...messagesList])
+            setMessage('')
+        }
     }
 
 
@@ -196,13 +200,12 @@ function deleteMessage(){
         props.messages.filter(
          () => {
              if(props.messages.id == event.target.parentElement.parentElement.key){
-                console.log('deu certo!')
                 const newListMessage = props.messages;
-                 const index = props.messages.indexOf(newListMessage)
-                 newListMessage.splice(index)
-                 event.target.parentElement.parentElement.remove()
-                 props.set(newListMessage)
-                 console.log(props.messages)
+                const index = props.messages.indexOf(newListMessage)
+                newListMessage.splice(index)
+                event.target.parentElement.parentElement.remove()
+                props.set(newListMessage)
+                console.log(props.messages)
              }
          }
      )

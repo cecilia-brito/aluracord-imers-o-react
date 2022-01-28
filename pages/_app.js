@@ -1,3 +1,6 @@
+import { ContextProvider } from "../src/context";
+import { context } from "../src/context";
+
 function GlobalStyle(props){
     return (
         <style global jsx>{`
@@ -30,8 +33,11 @@ function GlobalStyle(props){
 export default function MyApp({ Component, pageProps }) {
     return (
         <>
+            <ContextProvider>
             <GlobalStyle />
+          
             <Component {...pageProps} />
+            </ContextProvider>
         </>
     )
 }
