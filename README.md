@@ -32,6 +32,7 @@ $ cd aluracord_she-ra
 # Instale as dependências
 $ npm install next react react-dom
 $ npm install @skynexui/components
+$ npm install axios
 
 #Rode o projeto localmente
 $ npm run dev
