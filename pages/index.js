@@ -222,7 +222,8 @@ export default function HomePage() {
 					backgroundRepeat: 'no-repeat', backgroundSize: 'auto', backgroundBlendMode: 'multiply',
 				}}
 			>
-				<ButtonChangeTheme></ButtonChangeTheme>
+				{/*TO-DO-Fazer botã de tema escuro*/}
+				{/* <ButtonChangeTheme></ButtonChangeTheme> */}
 				<Box styleSheet={{display:'flex', alighItems:'center', display: 'flex',
 							alignItems: 'center',
 							justifyContent: 'space-between',
