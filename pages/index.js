@@ -4,7 +4,6 @@ import React, { useContext } from 'react'
 import { useRouter} from 'next/router'
 import services from '../src/services'
 import { context } from '../src/context';
-import { async } from 'regenerator-runtime';
 
 function MyTitle(props) {
 	const Tag = props.tag || 'h1';

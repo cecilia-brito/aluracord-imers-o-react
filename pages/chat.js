@@ -1,8 +1,7 @@
 import { Box, Text, TextField, Image, Button } from '@skynexui/components';
 import React from 'react';
 import appConfig from '../config.json';
-import { createClient, SupabaseClient } from '@supabase/supabase-js'
-
+import { createClient} from '@supabase/supabase-js'
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTY0MzQxNTkyMSwiZXhwIjoxOTU4OTkxOTIxfQ.b4ZDDcz0n_WuPBY__PJ4Lz3pPKSkoSK1twrh0KsUJtw'
 const SUPABASE_URL = 'https://mbkhhjsklhiyswdszgix.supabase.co'
 const SUPABASE_CLIENT = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
@@ -10,6 +9,7 @@ const SUPABASE_CLIENT = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
 export default function ChatPage() {
     const [message, setMessage] = React.useState('');
     const [messagesList, setMessagesList] = React.useState([]);
+    const [visibilityLoading, setVisibilityLoading] = React.useState('flex');
     React.useEffect(() => { 
         SUPABASE_CLIENT
             .from('messages')
@@ -20,6 +20,67 @@ export default function ChatPage() {
                 setMessagesList(data)
             }) 
         },[])
+
+    function LoadingChat(props){
+        setTimeout(() =>{
+            setVisibilityLoading('none')
+        }, 6000)
+            return(
+                <>
+                    <div className='box'>
+                            <div className='box-img-text'>
+                                <div className='box-text'>
+                                    <h4>Estamos carregando o coração de etéria, aguarde</h4>
+                                </div>
+                                <div className='box-img'>
+                                <   img src='https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/75eafe9f-a87c-45fa-b6bb-328c9e7b76f9/dez0ntn-bd3a805f-5b7a-4fc2-ae48-8779319b4e0b.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzc1ZWFmZTlmLWE4N2MtNDVmYS1iNmJiLTMyOGM5ZTdiNzZmOVwvZGV6MG50bi1iZDNhODA1Zi01YjdhLTRmYzItYWU0OC04Nzc5MzE5YjRlMGIucG5nIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.mxNGTGzkb8VBmMvVkRYVzDbDRIKUzq6aVGsDZDTkvkw' width='20' height='80'/>
+                                </div>
+                            </div>
+                    </div>
+                    <style jsx>{`
+                        .box{
+                            width: 100%;
+                            height: 100%;
+                            background-color: #242642; 
+                            z-index: 1000;
+                            position: absolute
+                            margin: auto;
+                            text-align: center;
+                            display: ${props.visible};
+                            align-items: center;
+                            justify-content: center;
+                        }
+
+                        .box-text{
+                            display:block
+                            color: white;
+                        }
+                        .box-img-text{
+                            width: 200px;
+                            font-size: 12px;
+                            font-weight: 600;
+                            opacity: 60%;
+                        }
+
+                        @keyframes sword{
+                            from{
+                                transform: rotate(0deg);
+                            } to{
+                                transform: rotate(360deg)
+                            }
+                        }
+
+                        img{
+                            margin: 10px auto;
+                            filter: grayscale(50%);
+                            animation-name: sword;
+                            animation-duration: 6s;
+                            animation-delay: 0.5s
+                        }
+                    `}</style>
+                </>
+            )
+    }
 
     function ButtonSend(){
         return(
@@ -56,7 +117,6 @@ export default function ChatPage() {
 
     function handleNewMessage(newMessage) {
         const message = {
-            // id: messagesList.length + 1,
             text: newMessage,
             whoSended: 'cecilia-brito'
         }
@@ -66,8 +126,8 @@ export default function ChatPage() {
         .insert([message])
         .then((data) =>{
             console.log('criando mensagem', data)
-            // setMessagesList([
-            //     data[0], ...messagesList])
+            setMessagesList([
+                data[0], ...messagesList])
         })
 
     if(message.text !== ''){
@@ -114,6 +174,7 @@ export default function ChatPage() {
                         padding: '16px',
                     }}
                 >
+                  <LoadingChat visible={visibilityLoading}></LoadingChat>
                 <MessageList messages = {messagesList} set={setMessagesList} />
 
                     <Box
@@ -189,6 +250,21 @@ function Header() {
 }
 
 function MessageList(props) {
+
+    function MyLink(){
+        return(
+            <>
+                <a  href={`https://github.com/${props.whoSended}`}></a>
+                <style jsx>{`
+                //  a:visited{
+                //      color: white;
+                //  }
+
+                `}</style>
+            </>
+        )
+    }
+
     function DeleteButton(){
         return (
             <div>
@@ -221,9 +297,7 @@ function MessageList(props) {
 }
 
 function deleteMessage(){
-    console.log('fui clicado')
     if(props.messages !== undefined){
-        console.log('fui clicado e mensagens não é undefined')
         props.messages.filter(
          () => {
              if(props.messages.id == event.target.parentElement.parentElement.key){
@@ -271,40 +345,42 @@ function deleteMessage(){
                                     padding: '6px'
                                 }}
                             >
-                                <Box
-                                    styleSheet={{
-                                        marginBottom: '8px',
-                                    }}
-                                >
-                                <div>
-                                    <Image
+                                <a href={`https://github.com/${actualMessage.whoSended}`}>
+                                    <Box
                                         styleSheet={{
-                                            width: '20px',
-                                            height: '20px',
-                                            borderRadius: '50%',
-                                            display: 'inline-block',
-                                            marginRight: '8px',
+                                            marginBottom: '8px',
                                         }}
-                                        src={`https://github.com/${actualMessage.whoSended}.png`}
-                                    />
-                                    <Text tag="strong" styleSheet={{
-                                        display: 'inline-block'
-                                    }}>
-                                        {actualMessage.whoSended}
-                                    </Text>
-                                    <Text
-                                        styleSheet={{
-                                            fontSize: '10px',
-                                            marginLeft: '8px',
-                                            color: appConfig.theme.colors.neutrals[300],
-                                            display: 'inline-block'
-                                        }}
-                                        tag="span"
                                     >
-                                        {(new Date().toLocaleDateString() + ' - ' + new Date().getHours() + ' : ' + new Date().getMinutes())}
-                                    </Text>
-                                </div>
-                                </Box>
+                                    <div>
+                                        <Image
+                                            styleSheet={{
+                                                width: '20px',
+                                                height: '20px',
+                                                borderRadius: '50%',
+                                                display: 'inline-block',
+                                                marginRight: '8px',
+                                            }}
+                                            src={`https://github.com/${actualMessage.whoSended}.png`}
+                                        />
+                                        <Text tag="strong" styleSheet={{
+                                            display: 'inline-block'
+                                        }}>
+                                            {actualMessage.whoSended}
+                                        </Text>
+                                        <Text
+                                            styleSheet={{
+                                                fontSize: '10px',
+                                                marginLeft: '8px',
+                                                color: appConfig.theme.colors.neutrals[300],
+                                                display: 'inline-block'
+                                            }}
+                                            tag="span"
+                                        >
+                                            {(new Date().toLocaleDateString() + ' - ' + new Date().getHours() + ' : ' + new Date().getMinutes())}
+                                        </Text>
+                                    </div>
+                                    </Box>
+                                </a>
                                 {actualMessage.text}
                                 {console.log(actualMessage.text)}
                             </Text>
@@ -313,6 +389,11 @@ function deleteMessage(){
                     )
                 })
             }
+            <style jsx>{`
+                a, a:visited, a:hover, a:active{
+                    color: white;
+                }
+            `}</style>
         </Box>
     )
 }
