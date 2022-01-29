@@ -21,12 +21,6 @@ async function deleteMessageOnDatabase(id){
                 console.log('deletando messagem', data)
             }
         )
-    // const whatDelete = await SUPABASE_CLIENT
-    // .from('messages')
-    // .delete({id: id})
-    // .then((data) =>{ 
-    //     console.log('criando mensagem', data)
-    // })
     console.log(whatDelete)
  }
 
@@ -42,18 +36,18 @@ function listennerAddMessagesInRealTime(addMessage){
     )
 }
 
-// function listennerRemoveMessagesInRealTime(removeMessage){
-//     return (
-//         SUPABASE_CLIENT
-//             .from('messages')
-//             .on('DELETE', (data) => {
-//                     console.log(data.new)
-//                     // removeMessage(data.new)
-//                 }
-//             )
-//             .subscribe()
-//     )
-// }
+function listennerRemoveMessagesInRealTime(removeMessage){
+    return (
+        SUPABASE_CLIENT
+            .from('messages')
+            .on('DELETE', (data) => {
+                    console.log(data.new)
+                    // removeMessage(data.new)
+                }
+            )
+            .subscribe()
+    )
+}
 
 export default function ChatPage() {
     const userLogged = useRouter().query.username
@@ -76,11 +70,11 @@ export default function ChatPage() {
                     ]
                     });
             }); 
-        //  listennerRemoveMessagesInRealTime(deleteMessageOnDatabase) 
-                //  return() => {
-                //      subscriptionAddMessages.unsubscribe();
-                //      subscriptionRemoveMessages.unsubscribe()
-                //  }
+         listennerRemoveMessagesInRealTime(deleteMessageOnDatabase) 
+                 return() => {
+                     subscriptionAddMessages.unsubscribe();
+                     subscriptionRemoveMessages.unsubscribe()
+                 }
             }, [])
 
     function LoadingChat(props){
@@ -336,11 +330,11 @@ function MessageList(props) {
                                                     event.target.parentElement.parentElement.remove()
                                                     props.set(newListMessage)
                                                     console.log(props.messages)
-                                                    // console.log(props.messages[i].id)
-                                                    // deleteMessageOnDatabase(props.message[i].id)
+                                                    console.log(props.messages[i].id)
+                                                    deleteMessageOnDatabase(props.message[i].id)
                                                 // }
                                             // }
-                                            // i++
+                                            i++
                                         }
                                         }
                                     )
@@ -453,7 +447,7 @@ function MessageList(props) {
                                    
                                 actualMessage.text}
                             </Text>
-                            <DeleteButton></DeleteButton>
+                        {/* <DeleteButton></DeleteButton> */}
                      </Box>
                     )
                 })
