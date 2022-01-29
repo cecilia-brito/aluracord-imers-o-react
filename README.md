@@ -30,12 +30,13 @@ $ git clone https://github.com/cecilia-brito/calculator
 $ cd aluracord_she-ra
 
 # Instale as dependências
-$ npm install next react react-dom
-$ npm install @skynexui/components
-$ npm install axios
+$ yarn add next react react-dom
+$ yarn add @skynexui/components
+$ yarn add axios
+$ yarn add @supabase/supabase-js
 
 #Rode o projeto localmente
-$ npm run dev
+$ yarn dev
 ```
 
 ## 💻Desenvolvimento 
