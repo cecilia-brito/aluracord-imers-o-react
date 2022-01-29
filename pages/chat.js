@@ -1,12 +1,26 @@
 import { Box, Text, TextField, Image, Button } from '@skynexui/components';
 import React from 'react';
 import appConfig from '../config.json';
+import { createClient, SupabaseClient } from '@supabase/supabase-js'
 
-const SUBASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTY0MzQxNTkyMSwiZXhwIjoxOTU4OTkxOTIxfQ.b4ZDDcz0n_WuPBY__PJ4Lz3pPKSkoSK1twrh0KsUJtw'
-const SUBASE_URL = 'https://mbkhhjsklhiyswdszgix.supabase.co'
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTY0MzQxNTkyMSwiZXhwIjoxOTU4OTkxOTIxfQ.b4ZDDcz0n_WuPBY__PJ4Lz3pPKSkoSK1twrh0KsUJtw'
+const SUPABASE_URL = 'https://mbkhhjsklhiyswdszgix.supabase.co'
+const SUPABASE_CLIENT = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+
 export default function ChatPage() {
     const [message, setMessage] = React.useState('');
     const [messagesList, setMessagesList] = React.useState([]);
+    React.useEffect(() => { 
+        SUPABASE_CLIENT
+            .from('messages')
+            .select('*')
+            .order('id', {ascending: false})
+            .then(({data})=>{
+                console.log('dados', data)
+                setMessagesList(data)
+            }) 
+        },[])
+
     function ButtonSend(){
         return(
             <>
@@ -42,14 +56,25 @@ export default function ChatPage() {
 
     function handleNewMessage(newMessage) {
         const message = {
-            id: messagesList.length + 1,
+            // id: messagesList.length + 1,
             text: newMessage,
             whoSended: 'cecilia-brito'
         }
-        if(message.text !== ''){
-            setMessagesList([message, ...messagesList])
-            setMessage('')
-        }
+
+    SUPABASE_CLIENT
+        .from('messages')
+        .insert([message])
+        .then((data) =>{
+            console.log('criando mensagem', data)
+            // setMessagesList([
+            //     data[0], ...messagesList])
+        })
+
+    if(message.text !== ''){
+        setMessagesList([message, ...messagesList])
+        setMessage('')
+    }
+        
     }
 
 
@@ -260,7 +285,7 @@ function deleteMessage(){
                                             display: 'inline-block',
                                             marginRight: '8px',
                                         }}
-                                        src={`https://github.com/cecilia-brito.png`}
+                                        src={`https://github.com/${actualMessage.whoSended}.png`}
                                     />
                                     <Text tag="strong" styleSheet={{
                                         display: 'inline-block'
