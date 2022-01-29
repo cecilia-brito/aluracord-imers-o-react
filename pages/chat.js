@@ -1,12 +1,62 @@
 import { Box, Text, TextField, Image, Button } from '@skynexui/components';
 import React from 'react';
 import appConfig from '../config.json';
-import { createClient} from '@supabase/supabase-js'
+import { createClient, SupabaseClient} from '@supabase/supabase-js'
+import { useRouter } from 'next/router';
+import {ButtonSendSticker} from '../src/components/stickers'
+
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTY0MzQxNTkyMSwiZXhwIjoxOTU4OTkxOTIxfQ.b4ZDDcz0n_WuPBY__PJ4Lz3pPKSkoSK1twrh0KsUJtw'
 const SUPABASE_URL = 'https://mbkhhjsklhiyswdszgix.supabase.co'
 const SUPABASE_CLIENT = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
 
+
+async function deleteMessageOnDatabase(id){
+    const whatDelete = 
+        await SUPABASE_CLIENT
+        .from('messages')
+        .delete()
+        .match({ id: id })
+        .then(
+            (data) =>{ 
+                console.log('deletando messagem', data)
+            }
+        )
+    // const whatDelete = await SUPABASE_CLIENT
+    // .from('messages')
+    // .delete({id: id})
+    // .then((data) =>{ 
+    //     console.log('criando mensagem', data)
+    // })
+    console.log(whatDelete)
+ }
+
+function listennerAddMessagesInRealTime(addMessage){
+    return (
+        SUPABASE_CLIENT
+            .from('messages')
+            .on('INSERT', (data) => {
+                    addMessage(data.new)
+                }
+            )
+            .subscribe()
+    )
+}
+
+// function listennerRemoveMessagesInRealTime(removeMessage){
+//     return (
+//         SUPABASE_CLIENT
+//             .from('messages')
+//             .on('DELETE', (data) => {
+//                     console.log(data.new)
+//                     // removeMessage(data.new)
+//                 }
+//             )
+//             .subscribe()
+//     )
+// }
+
 export default function ChatPage() {
+    const userLogged = useRouter().query.username
     const [message, setMessage] = React.useState('');
     const [messagesList, setMessagesList] = React.useState([]);
     const [visibilityLoading, setVisibilityLoading] = React.useState('flex');
@@ -19,7 +69,19 @@ export default function ChatPage() {
                 console.log('dados', data)
                 setMessagesList(data)
             }) 
-        },[])
+         listennerAddMessagesInRealTime((newMessage) => {
+                setMessagesList(
+                    (actualValueList) => {
+                    return [newMessage, ...actualValueList
+                    ]
+                    });
+            }); 
+        //  listennerRemoveMessagesInRealTime(deleteMessageOnDatabase) 
+                //  return() => {
+                //      subscriptionAddMessages.unsubscribe();
+                //      subscriptionRemoveMessages.unsubscribe()
+                //  }
+            }, [])
 
     function LoadingChat(props){
         setTimeout(() =>{
@@ -90,7 +152,7 @@ export default function ChatPage() {
                                 handleNewMessage(message)
                             }
                         }>
-                    <img src='https://icons.veryicon.com/png/o/object/lucq-backstage/send-out.png' width='50' height='50'/>
+                    <img src='https://icons.veryicon.com/png/o/object/lucq-backstage/send-out.png' width='40' height='40'/>
                 </button>
                 <style jsx>{`
                     button{
@@ -99,7 +161,8 @@ export default function ChatPage() {
                         cursor: pointer;
                         display: flex;
                         align-items: center;
-                        margin-bottom: 10px;
+                        margin-bottom: 8px;
+                        margin-right: 10px;
                         transition: 0.05s all;
                     }
                     button:hover{
@@ -118,22 +181,20 @@ export default function ChatPage() {
     function handleNewMessage(newMessage) {
         const message = {
             text: newMessage,
-            whoSended: 'cecilia-brito'
+            whoSended: userLogged
         }
 
-    SUPABASE_CLIENT
-        .from('messages')
-        .insert([message])
-        .then((data) =>{
-            console.log('criando mensagem', data)
-            setMessagesList([
-                data[0], ...messagesList])
-        })
+        SUPABASE_CLIENT
+            .from('messages')
+            .insert([message])
+            .then((data) =>{ 
+                console.log('criando mensagem', data)
+            })
 
-    if(message.text !== ''){
-        setMessagesList([message, ...messagesList])
-        setMessage('')
-    }
+        if(message.text !== ''){
+            setMessagesList([message, ...messagesList])
+            setMessage('')
+        }
         
     }
 
@@ -153,7 +214,7 @@ export default function ChatPage() {
                     flexDirection: 'column',
                     flex: 1,
                     boxShadow: '0 2px 10px 0 rgb(0 0 0 / 20%)',
-                    borderRadius: '5px',
+                    borderRadius: '20px',
                     backgroundColor: '#161727',
                     height: '100%',
                     maxWidth: '95%',
@@ -170,12 +231,12 @@ export default function ChatPage() {
                         height: '80%',
                         backgroundColor: '#242642',
                         flexDirection: 'column',
-                        borderRadius: '5px',
+                        borderRadius: '20px',
                         padding: '16px',
                     }}
                 >
                   <LoadingChat visible={visibilityLoading}></LoadingChat>
-                <MessageList messages = {messagesList} set={setMessagesList} />
+                <MessageList userLogged={userLogged} messages = {messagesList} set={setMessagesList} />
 
                     <Box
                         as="form"
@@ -188,7 +249,7 @@ export default function ChatPage() {
                         backgroundColor: '#424676',
                         width: '100%',
                         display: 'flex',
-                        borderRadius: '5px',
+                        borderRadius: '20px',
                         padding: '2px'
                     }}>
                         <TextField
@@ -214,7 +275,7 @@ export default function ChatPage() {
                                 width: '100%',
                                 border: '0',
                                 resize: 'none',
-                                borderRadius: '5px',
+                                borderRadius: '20px',
                                 padding: '6px 8px',
                                 backgroundColor: '#424676',
                                 marginRight: '12px',
@@ -222,6 +283,11 @@ export default function ChatPage() {
                             }}
                         >
                         </TextField>
+                        <ButtonSendSticker onStickerClick={
+                            (sticker) => {
+                                handleNewMessage(':sticker:'+ sticker)
+                            }
+                        }/>
                         <ButtonSend></ButtonSend>
                     </Box>
                     </Box>
@@ -251,26 +317,36 @@ function Header() {
 
 function MessageList(props) {
 
-    function MyLink(){
-        return(
-            <>
-                <a  href={`https://github.com/${props.whoSended}`}></a>
-                <style jsx>{`
-                //  a:visited{
-                //      color: white;
-                //  }
-
-                `}</style>
-            </>
-        )
-    }
-
-    function DeleteButton(){
+    function DeleteButton(){    
         return (
             <div>
-                <button onClick={
-                 deleteMessage
-                }> 
+                <button onClick={   
+                    (event) => {
+                        let i = 0
+                            if(props.messages !== undefined){
+                                props.messages.filter(
+                                    () => {
+                                        // if(i <= props.messages.lenght){
+                                        console.log(props.messages)
+                                            if(props.messages.id == event.target.parentElement.parentElement.key){
+                                                // if(props.messages.whoSended == props.userLogged){
+                                                    const newListMessage = props.messages;
+                                                    const index = props.messages.indexOf(newListMessage)
+                                                    newListMessage.splice(index)
+                                                    event.target.parentElement.parentElement.remove()
+                                                    props.set(newListMessage)
+                                                    console.log(props.messages)
+                                                    // console.log(props.messages[i].id)
+                                                    // deleteMessageOnDatabase(props.message[i].id)
+                                                // }
+                                            // }
+                                            // i++
+                                        }
+                                        }
+                                    )
+                                }
+                            }
+                        }> 
                     x
                 </button>
                 <style jsx>{`
@@ -296,22 +372,6 @@ function MessageList(props) {
         
 }
 
-function deleteMessage(){
-    if(props.messages !== undefined){
-        props.messages.filter(
-         () => {
-             if(props.messages.id == event.target.parentElement.parentElement.key){
-                const newListMessage = props.messages;
-                const index = props.messages.indexOf(newListMessage)
-                newListMessage.splice(index)
-                event.target.parentElement.parentElement.remove()
-                props.set(newListMessage)
-                console.log(props.messages)
-             }
-         }
-     )
-    }
-}
     return (
         <Box
             tag="ul"
@@ -332,13 +392,14 @@ function deleteMessage(){
                             display: 'flex',
                             justifyContent: 'space-between',
                             width: '100%',
+                            borderRadius: '5px',
                             hover: {
                                 backgroundColor: '#161727'
                             },
                             marginBottom: '12px',
                         }}>
                             <Text
-                                key= {actualMessage.id}
+                                key = {actualMessage.id}
                                 tag="li"
                                 styleSheet={{
                                     borderRadius: '5px',
@@ -381,8 +442,16 @@ function deleteMessage(){
                                     </div>
                                     </Box>
                                 </a>
-                                {actualMessage.text}
-                                {console.log(actualMessage.text)}
+
+                                {actualMessage.text.startsWith(':sticker:') 
+                                ?
+                                (
+                                    <Image src={actualMessage.text.replace(':sticker:', '')} styleSheet={{
+                                        maxWidth:'200px', width: '100%'
+                                    }}></Image>
+                                ):
+                                   
+                                actualMessage.text}
                             </Text>
                             <DeleteButton></DeleteButton>
                      </Box>

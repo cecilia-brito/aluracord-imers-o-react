@@ -24,9 +24,8 @@ function MyTitle(props) {
 }
 
 export default function HomePage() {
-
+	var captured = false;
 	const ctx =  useContext(context);
-	const ctxFriends = useContext(context)
 	const [username, setUsername] = React.useState('Adora?');
 	const routering = useRouter() 
 	const [visibilityBox, setVisibilityBox] = React.useState('none');
@@ -49,15 +48,13 @@ export default function HomePage() {
 			</>
 		)
 	  }
-	  
-	// export default ButtonChangeTheme
-
 	async function getUserData(){
 		try{
 			const response_user = await services.get(`/${username}`)
 			ctx.setUserData(response_user.data)
-			console.log('ctxuser: ', ctx)
-			getUserFriends()
+			console.log('ctxuser: ', ctx.userData)
+			captured = true
+			return captured;
 		}catch(err){
 			console.log(err)
 		}
@@ -66,14 +63,14 @@ export default function HomePage() {
 	async function getUserFriends(){
 		try{
 			const response_user_followers = await services.get(`/${username}/followers`)
-			ctxFriends.setUserFriends(response_user_followers.data)
-			if(ctx.userData.followers == 0){
+			ctx.setUserFriends(response_user_followers.data)
+			if(ctx.userData.followers === 0 && captured === false){
 				setVisibilityBox('none')
 			} else{
-				setVisibilityBox('block')
 				sorteioDasImagensFriends()
+				console.log(ctx.userFriends)
+				setVisibilityBox('block')
 			}
-			console.log('ctxFriens: ',ctxFriends)
 		}catch(err){
 			console.log(err)
 		}
@@ -91,9 +88,9 @@ export default function HomePage() {
 
 		setInfoFriends(
 			{	
-				login_friends: [ctxFriends.userFriends[indexs[0]]?.login, ctxFriends.userFriends[indexs[1]]?.login, ctxFriends.userFriends[indexs[2]]?.login],
-				img_friends: [`https://github.com/${ctxFriends.userFriends[indexs[0]]?.login}.png`,`https://github.com/${ctxFriends.userFriends[indexs[1]]?.login}.png`,`https://github.com/${ctxFriends.userFriends[indexs[2]]?.login}.png`],
-				link_friends: [`https://github.com/${ctxFriends.userFriends[indexs[0]]?.login}`, `https://github.com/${ctxFriends.userFriends[indexs[1]]?.login}`, `https://github.com/${ctxFriends.userFriends[indexs[2]]?.login}`]
+				login_friends: [ctx.userFriends[indexs[0]]?.login, ctx.userFriends[indexs[1]]?.login, ctx.userFriends[indexs[2]]?.login],
+				img_friends: [`https://github.com/${ctx.userFriends[indexs[0]]?.login}.png`,`https://github.com/${ctx.userFriends[indexs[1]]?.login}.png`,`https://github.com/${ctx.userFriends[indexs[2]]?.login}.png`],
+				link_friends: [`https://github.com/${ctx.userFriends[indexs[0]]?.login}`, `https://github.com/${ctx.userFriends[indexs[1]]?.login}`, `https://github.com/${ctx.userFriends[indexs[2]]?.login}`]
 			}
 		)
 	}
@@ -166,7 +163,11 @@ export default function HomePage() {
 		return(
 			<>
 				<span>
-					<button type='button' onClick={getUserData}>{props.text}</button>
+					<button type='button' onClick={async function run(){
+													getUserData()
+													getUserFriends()
+												}
+						}>{props.text}</button>
 					<style jsx>{`
 						button{
 							border: none;
@@ -223,7 +224,7 @@ export default function HomePage() {
 			>
 				{/*TO-DO-Fazer botã de tema escuro*/}
 				{/* <ButtonChangeTheme></ButtonChangeTheme> */}
-				<Box styleSheet={{display:'flex', alighItems:'center', display: 'flex',
+				<Box styleSheet={{display:'flex', alighItems:'center',
 							alignItems: 'center',
 							justifyContent: 'space-between',
 							flexDirection: {
@@ -254,8 +255,9 @@ export default function HomePage() {
 								function clicked(event) {
 									console.log('fui clicado')
 									event.preventDefault()
+									
 									//mudando de página
-									routering.push('/chat')
+									routering.push(`/chat?username=${username}`)
 								}
 							}
 							styleSheet={{
@@ -295,15 +297,12 @@ export default function HomePage() {
 											setUsername(newInput)
 											setVisible('hidden')
 											setLink(`https://github.com/${newInput}.png`)
-											setInterval(getUserData, 3500);
 										} else {
 											setUsername('')
 											setVisibilityBox('none')
 											setVisible('visible')
 											setLink('https://i.pinimg.com/originals/d3/82/6a/d3826a943b0d3a9d54ec3d3cba01d0ef.png')
-											// setInfoFriends({img_friends: ['https://i.pinimg.com/originals/d3/82/6a/d3826a943b0d3a9d54ec3d3cba01d0ef.png', 'https://i.pinimg.com/originals/d3/82/6a/d3826a943b0d3a9d54ec3d3cba01d0ef.png', 'https://i.pinimg.com/originals/d3/82/6a/d3826a943b0d3a9d54ec3d3cba01d0ef.png'], link_friends: ['', '', ''], login_friends: ['', '', '']})
 										}
-										console.log('visibility', visibilityBox)
 									}
 									}
 								>	
