@@ -4,6 +4,7 @@ import React, { useContext } from 'react'
 import { useRouter} from 'next/router'
 import services from '../src/services'
 import { context } from '../src/context';
+import { async } from 'regenerator-runtime';
 
 function MyTitle(props) {
 	const Tag = props.tag || 'h1';
@@ -31,26 +32,49 @@ export default function HomePage() {
 	const routering = useRouter() 
 	const [visibilityBox, setVisibilityBox] = React.useState('none');
 	const [infoFriends, setInfoFriends] = React.useState({img_friends: ['', '', ''], link_friends: ['','',''], login_friends: ['', '', '']})
-	console.log(infoFriends)
 	const [visible, setVisible] = React.useState('hidden')
 	const [link, setLink] = React.useState(`https://64.media.tumblr.com/3e5489aa15d4dbe40d3b3eace94b5747/fc1cee0b79687753-53/s1280x1920/0d305a36f63d4404dfdd574cc9b61d04c1ec5271.jpg`)
 
+
+	function ButtonChangeTheme(props){
+		return(
+			<>
+			  <button>
+				  <img src={props.img}/>
+			  </button>
+			  <style jsx>{`
+				button{
+					cursor: pointer;
+				}
+			  `}</style>
+			</>
+		)
+	  }
+	  
+	// export default ButtonChangeTheme
+
 	async function getUserData(){
-		console.log('fui clicado')
-		console.log('api:', services)
 		try{
 			const response_user = await services.get(`/${username}`)
-			const response_user_followers = await services.get(`/${username}/followers`)
 			ctx.setUserData(response_user.data)
+			console.log('ctxuser: ', ctx)
+			getUserFriends()
+		}catch(err){
+			console.log(err)
+		}
+	}
+
+	async function getUserFriends(){
+		try{
+			const response_user_followers = await services.get(`/${username}/followers`)
 			ctxFriends.setUserFriends(response_user_followers.data)
-			console.log(ctxFriends)
-			console.log(ctx.userData)
-			if(ctx.userData.followers == 0 || ctx.userData.followers== undefined || ctx.userData.followers == ''){
+			if(ctx.userData.followers == 0){
 				setVisibilityBox('none')
 			} else{
 				setVisibilityBox('block')
 				sorteioDasImagensFriends()
 			}
+			console.log('ctxFriens: ',ctxFriends)
 		}catch(err){
 			console.log(err)
 		}
@@ -61,12 +85,11 @@ export default function HomePage() {
 
 		for(let i = 0; i <= 2; i++){
 			indexs.push(parseInt(Math.random() * 30))
-			while(indexs[i] == indexs[i-1]){
-				indexs[i] = (parseInt(Math.random() * 30))
-			}
+			// seed = new Date.getHours()
+			while(indexs[i] == indexs[i-1] || indexs[i] == indexs[i+1])
+			indexs[i] = (parseInt(Math.random() * 30))
 		}
 
-		console.log(indexs)
 		setInfoFriends(
 			{	
 				login_friends: [ctxFriends.userFriends[indexs[0]]?.login, ctxFriends.userFriends[indexs[1]]?.login, ctxFriends.userFriends[indexs[2]]?.login],
@@ -74,8 +97,6 @@ export default function HomePage() {
 				link_friends: [`https://github.com/${ctxFriends.userFriends[indexs[0]]?.login}`, `https://github.com/${ctxFriends.userFriends[indexs[1]]?.login}`, `https://github.com/${ctxFriends.userFriends[indexs[2]]?.login}`]
 			}
 		)
-
-		console.log(infoFriends)
 	}
 
 	function SectionInfoUser(props){
@@ -201,6 +222,7 @@ export default function HomePage() {
 					backgroundRepeat: 'no-repeat', backgroundSize: 'auto', backgroundBlendMode: 'multiply',
 				}}
 			>
+				<ButtonChangeTheme></ButtonChangeTheme>
 				<Box styleSheet={{display:'flex', alighItems:'center', display: 'flex',
 							alignItems: 'center',
 							justifyContent: 'space-between',
@@ -273,17 +295,13 @@ export default function HomePage() {
 											setUsername(newInput)
 											setVisible('hidden')
 											setLink(`https://github.com/${newInput}.png`)
-											if(ctx.userData.followers == 0){
-												setVisibilityBox('none')
-											} else{
-												setVisibilityBox('visible')
-											}
+											setInterval(getUserData, 3500);
 										} else {
 											setUsername('')
 											setVisibilityBox('none')
 											setVisible('visible')
 											setLink('https://i.pinimg.com/originals/d3/82/6a/d3826a943b0d3a9d54ec3d3cba01d0ef.png')
-											setInfoFriends({img_friends: ['https://i.pinimg.com/originals/d3/82/6a/d3826a943b0d3a9d54ec3d3cba01d0ef.png', 'https://i.pinimg.com/originals/d3/82/6a/d3826a943b0d3a9d54ec3d3cba01d0ef.png', 'https://i.pinimg.com/originals/d3/82/6a/d3826a943b0d3a9d54ec3d3cba01d0ef.png'], link_friends: ['', '', ''], login_friends: ['', '', '']})
+											// setInfoFriends({img_friends: ['https://i.pinimg.com/originals/d3/82/6a/d3826a943b0d3a9d54ec3d3cba01d0ef.png', 'https://i.pinimg.com/originals/d3/82/6a/d3826a943b0d3a9d54ec3d3cba01d0ef.png', 'https://i.pinimg.com/originals/d3/82/6a/d3826a943b0d3a9d54ec3d3cba01d0ef.png'], link_friends: ['', '', ''], login_friends: ['', '', '']})
 										}
 										console.log('visibility', visibilityBox)
 									}

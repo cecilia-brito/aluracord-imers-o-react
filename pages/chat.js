@@ -2,6 +2,8 @@ import { Box, Text, TextField, Image, Button } from '@skynexui/components';
 import React from 'react';
 import appConfig from '../config.json';
 
+const SUBASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTY0MzQxNTkyMSwiZXhwIjoxOTU4OTkxOTIxfQ.b4ZDDcz0n_WuPBY__PJ4Lz3pPKSkoSK1twrh0KsUJtw'
+const SUBASE_URL = 'https://mbkhhjsklhiyswdszgix.supabase.co'
 export default function ChatPage() {
     const [message, setMessage] = React.useState('');
     const [messagesList, setMessagesList] = React.useState([]);
@@ -40,7 +42,7 @@ export default function ChatPage() {
 
     function handleNewMessage(newMessage) {
         const message = {
-            id: messagesList.length,
+            id: messagesList.length + 1,
             text: newMessage,
             whoSended: 'cecilia-brito'
         }
