@@ -11,16 +11,12 @@ const SUPABASE_CLIENT = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
 
 async function deleteMessageOnDatabase(id){
     try{
+        // console.log(messagesList.indexOf(id))
+        // indexMessageDelete = messagesList.indexOf(id)
         const whatDelete = 
             await SUPABASE_CLIENT
                 .from('messages')
                 .delete().match({id: id})
-                // .then(
-                //         () => {
-                //                 console.log('uhhuuuuuuuu')
-                //                 console.log(id)
-                //             }
-                //     )
         ;
     console.log('funcionou!')
     console.log(whatDelete)
@@ -42,18 +38,18 @@ function listennerAddMessagesInRealTime(addMessage){
             ).subscribe()
 }
 
-// function listennerRemoveMessagesInRealTime(removeMessage){
-//     return (
-//         SUPABASE_CLIENT
-//             .from('messages')
-//             .on('DELETE', (data) => {
-//                     console.log(data.new)
-//                     // removeMessage(data.new)
-//                 }
-//             )
-//             .subscribe()
-//     )
-// }
+function listennerRemoveMessagesInRealTime(removeMessage){
+    return (
+        SUPABASE_CLIENT
+            .from('messages')
+            .on('DELETE', (data) => {
+                    console.log(data.new)
+                    removeMessage(data.new)
+                }
+            )
+            .subscribe()
+    )
+}
 
 export default function ChatPage() {
     const userLogged = useRouter().query.username
@@ -83,6 +79,28 @@ export default function ChatPage() {
                 }
             ); 
     }, []);
+
+    // React.useEffect(() => {
+    //     SUPABASE_CLIENT
+    //         .from('messages')
+    //         .select('*')
+    //         .order('id', {ascending: false})
+    //         .then(({data})=>{
+    //             console.log('dados', data)
+    //             setMessagesList(data)
+    //         });
+
+    //     listennerRemoveMessagesInRealTime((deleteMessage) => {
+    //         const newListMessage = messagesList;
+    //         console.log('new list message', newListMessage)
+    //         const index = messagesList.indexOf(deleteMessage)
+    //         console.log('index: ', index)
+    //         // console.log(`new list message[${i}]: ${newListMessage[i]}`)
+    //         newListMessage.splice(index)
+    //         console.log('new list de message depois do slice:', newListMessage)
+    //         setMessagesList(newListMessage)
+    //     })
+    // }, []);
 
     function LoadingChat(props){
         setTimeout(() =>{
@@ -265,7 +283,6 @@ export default function ChatPage() {
                                 (event) => {
                                     if (event.key === 'Enter') {
                                         event.preventDefault()
-
                                         handleNewMessage(message)
                                     }
                                 }
@@ -318,10 +335,11 @@ function Header() {
 
 function MessageList(props) {
 
+    const [isHover, setIsHover] = React.useState(false)
+
     function DeleteButton(actualMessage){    
         return (
             <div>
-
                 {/* deleta a mensagem no front-end */}
                 <button onClick={   
                     (event) => {
@@ -338,8 +356,12 @@ function MessageList(props) {
                                                 deleteMessageOnDatabase(props.messages[i].id)  
                                             }
                                             const newListMessage = props.messages;
-                                            const index = props.messages.indexOf(newListMessage)
+                                            console.log('new list message', newListMessage)
+                                            const index = props.messages.indexOf(newListMessage[i])
+                                            console.log('index: ', index)
+                                            console.log(`new list message[${i}]: ${newListMessage[i]}`)
                                             newListMessage.splice(index)
+                                            console.log('new list de message depois do slice:', newListMessage)
                                             event.target.parentElement.parentElement.remove()
                                             props.set(newListMessage)
                                         }    
@@ -398,7 +420,9 @@ function MessageList(props) {
                                 backgroundColor: '#161727'
                             },
                             marginBottom: '12px',
-                        }}>
+                        }} onMouseEnter ={ () => { setIsHover(true)} }
+                            onMouseLeave = {() => {setIsHover(false)}}
+                        >
                             <Text
                                 key = {actualMessage.id}
                                 tag="li"
@@ -454,7 +478,9 @@ function MessageList(props) {
                                    
                                 actualMessage.text}
                             </Text>
-                        {actualMessage.whoSended === props.userLogged ? <DeleteButton id={actualMessage.id}></DeleteButton> : '' }
+                        {actualMessage.whoSended === props.userLogged && isHover ? 
+                        <DeleteButton id={actualMessage.id}></DeleteButton>
+                        : '' }
                      </Box>
                     )
                 })
