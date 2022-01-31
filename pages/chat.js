@@ -471,8 +471,9 @@ function MessageList(props) {
                         console.log(event.target)
                         console.log(actualMessage.whoSended)
                         console.log(props.userLogged)
-                        if(event._reactName == 'onMouseLeave' && actualMessage.whoSended  == props.userLogged){
-                            const element = event.target.nextSibling.children[0]
+                        if(event._reactName == 'onMouseLeave' && actualMessage.whoSended === props.userLogged){
+                            const element = event.target.parentElement.children[1]
+                            console.log(element)
                             if(element !== null){
                                 console.log(element)
                                 element.style.visibility = 'hidden'   
@@ -481,8 +482,11 @@ function MessageList(props) {
                     }
                     function elementIsHover(event){
                         console.log(event.target)
-                        if(event._reactName == 'onMouseEnter' &&  actualMessage.whoSended== props.userLogged){
-                            const element = event.target.nextSibling.children[0]
+                        console.log(actualMessage.whoSended)
+                        console.log(props.userLogged)
+                        if(event._reactName == 'onMouseEnter' &&  actualMessage.whoSended === props.userLogged){
+                            const element = event.target.parentElement.children[1]
+                            console.log(element)
                             if(element !== null){
                                 console.log(element)
                                 element.style.visibility = 'visible'   
