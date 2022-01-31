@@ -35,7 +35,7 @@ export default function MyApp({ Component, pageProps }) {
         <>
             <ContextProvider>
             <GlobalStyle />
-          
+            {/* <ButtonChangeTheme/> */}
             <Component {...pageProps} />
             </ContextProvider>
         </>

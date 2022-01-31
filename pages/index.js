@@ -2,8 +2,9 @@ import { Box, Button, Text, TextField, Image } from '@skynexui/components';
 import appConfig from "../config.json";
 import React, { useContext } from 'react'
 import { useRouter} from 'next/router'
-import services from '../src/services'
+import api from '../src/services'
 import { context } from '../src/context';
+import ButtonChangeTheme from '../src/components/buttonChangeTheme';
 
 function MyTitle(props) {
 	const Tag = props.tag || 'h1';
@@ -24,7 +25,9 @@ function MyTitle(props) {
 }
 
 export default function HomePage() {
-	var captured = false;
+	const [isClicked, setIsClicked] = React.useState(false)
+	const [isValidUser, setValidUser] = React.useState(false)
+	const [captured, setCaptured] = React.useState(false);
 	const ctx =  useContext(context);
 	const [username, setUsername] = React.useState('Adora?');
 	const routering = useRouter() 
@@ -34,46 +37,51 @@ export default function HomePage() {
 	const [link, setLink] = React.useState(`https://64.media.tumblr.com/3e5489aa15d4dbe40d3b3eace94b5747/fc1cee0b79687753-53/s1280x1920/0d305a36f63d4404dfdd574cc9b61d04c1ec5271.jpg`)
 
 
-	function ButtonChangeTheme(props){
-		return(
-			<>
-			  <button>
-				  <img src={props.img}/>
-			  </button>
-			  <style jsx>{`
-				button{
-					cursor: pointer;
-				}
-			  `}</style>
-			</>
-		)
-	  }
+	
 	async function getUserData(){
-		try{
-			const response_user = await services.get(`/${username}`)
+		// try{
+			const response_user = await api.get(`/${username}`)
 			ctx.setUserData(response_user.data)
+			if(ctx.message !== undefined){
+				setCaptured(false)
+				setValidUser(false)
+			} else{
+				setValidUser(true)
+				console.log('ctxuser: ', ctx.userData)
+				setCaptured(true)
+				// getUserFriends()
+				// getUserFriends()
+			}
 			console.log('ctxuser: ', ctx.userData)
-			captured = true
 			return captured;
-		}catch(err){
-			console.log(err)
-		}
+		// }catch(err){
+		// 	console.log(err)
+		// }
 	}
 
 	async function getUserFriends(){
-		try{
-			const response_user_followers = await services.get(`/${username}/followers`)
+			const response_user_followers = await api.get(`/${username}/followers`)
 			ctx.setUserFriends(response_user_followers.data)
-			if(ctx.userData.followers === 0 && captured === false){
-				setVisibilityBox('none')
-			} else{
-				sorteioDasImagensFriends()
-				console.log(ctx.userFriends)
-				setVisibilityBox('block')
-			}
-		}catch(err){
-			console.log(err)
-		}
+			// ctx.setUserFriends(response_user_followers.data)
+			console.log(ctx.userFriends)
+				if(ctx.userData.followers === 0 || ctx.userFriends.message !== undefined){
+					setVisibilityBox('none')
+				} else{
+					sorteioDasImagensFriends()
+					// setInfoFriends(
+					// 	{	
+					// 		img_friends: [`https://github.com/${ctx.userFriends[0]?.login}.png`,`https://github.com/${ctx.userFriends[1]?.login}.png`,`https://github.com/${ctx.userFriends[2]?.login}.png`],
+					// 		link_friends: [`https://github.com/${ctx.userFriends[0]?.login}`, `https://github.com/${ctx.userFriends[1]?.login}`, `https://github.com/${ctx.userFriends[2]?.login}`]
+					// 	}
+					// )
+					console.log(ctx.userFriends)
+					setVisibilityBox('block')
+				}
+			// } else{
+			// 	setVisibilityBox('none')
+			// }
+			console.log('user friends', ctx.userFriends)
+			console.log('get user friends rodou')
 	}
 
 	function sorteioDasImagensFriends(){
@@ -85,10 +93,9 @@ export default function HomePage() {
 			while(indexs[i] == indexs[i-1] || indexs[i] == indexs[i+1])
 			indexs[i] = (parseInt(Math.random() * 30))
 		}
-
+		
 		setInfoFriends(
 			{	
-				login_friends: [ctx.userFriends[indexs[0]]?.login, ctx.userFriends[indexs[1]]?.login, ctx.userFriends[indexs[2]]?.login],
 				img_friends: [`https://github.com/${ctx.userFriends[indexs[0]]?.login}.png`,`https://github.com/${ctx.userFriends[indexs[1]]?.login}.png`,`https://github.com/${ctx.userFriends[indexs[2]]?.login}.png`],
 				link_friends: [`https://github.com/${ctx.userFriends[indexs[0]]?.login}`, `https://github.com/${ctx.userFriends[indexs[1]]?.login}`, `https://github.com/${ctx.userFriends[indexs[2]]?.login}`]
 			}
@@ -159,24 +166,26 @@ export default function HomePage() {
 		)
 	}
 
-	function ButtonSend(props){
+	function ButtonSearch(props){
 		return(
 			<>
 				<span>
-					<button type='button' onClick={async function run(){
-													getUserData()
-													getUserFriends()
-												}
+					<button type='button' className='button_serch' onClick={() =>{	getUserData()
+															getUserFriends()
+
+														}
+													// getUserFriends()
+												
 						}>{props.text}</button>
 					<style jsx>{`
-						button{
+						.button_serch{
 							border: none;
 							background: transparent;
 							cursor: pointer;
 							padding: 5px;
 							font-size: 24px;
 						} 
-						button:hover{
+						.button_serch:hover{
 							transform: scale(1.2);
 							opacity: 70%;
 						}
@@ -215,6 +224,12 @@ export default function HomePage() {
 
 	return (
 		<>
+			{/* <Box styleSheet={{
+						position: 'absolute', top: '0',
+						backgroundColor: '#3f4273', width: '100%', maxHeight: '30px'
+						}}>
+					<ButtonChangeTheme></ButtonChangeTheme>
+			</Box> */}
 			<Box
 				styleSheet={{
 					display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -222,163 +237,194 @@ export default function HomePage() {
 					backgroundRepeat: 'no-repeat', backgroundSize: 'auto', backgroundBlendMode: 'multiply',
 				}}
 			>
-				{/*TO-DO-Fazer botã de tema escuro*/}
-				{/* <ButtonChangeTheme></ButtonChangeTheme> */}
-				<Box styleSheet={{display:'flex', alighItems:'center',
-							alignItems: 'center',
-							justifyContent: 'space-between',
-							flexDirection: {
-								xs: 'column',
-								sm: 'row',
-							},
-							}}>
-					<Box
-						styleSheet={{
-							display: 'flex',
-							alignItems: 'center',
-							justifyContent: 'space-between',
-							flexDirection: {
-								xs: 'column',
-								sm: 'row',
-							},
-							width: '100%', maxWidth: '600px',
-							borderRadius: '20px', padding: '32px', margin: '16px',
-							boxShadow: '0 2px 10px 0 rgb(36, 38, 66 / 20%)',
-							backgroundColor: '#3F4273',
-							gridArea: 'box'
-						}}
-					>
-						{/* Formulário */}
-						<Box
-							as="form"
-							onSubmit={
-								function clicked(event) {
-									console.log('fui clicado')
-									event.preventDefault()
-									
-									//mudando de página
-									routering.push(`/chat?username=${username}`)
-								}
-							}
-							styleSheet={{
-								display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-								width: { xs: '100%', sm: '50%' }, textAlign: 'center', marginBottom: '32px',
-							}}
-						>
-							<div>
-								<div className='box-subtitle-title-and-img'>
-									<MyTitle tag="h2">Hey Adora!</MyTitle>
-									<Text variant="body3" styleSheet={{ marginBottom: '32px', color: appConfig.theme.colors.neutrals[300], display: 'inline-block', gridArea: 'text2' }}>
-										{appConfig.name}
-									</Text>
-									<img className='img-catra' src='https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/75eafe9f-a87c-45fa-b6bb-328c9e7b76f9/deyumur-e1981004-b918-4d23-a31a-2d100890d99e.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzc1ZWFmZTlmLWE4N2MtNDVmYS1iNmJiLTMyOGM5ZTdiNzZmOVwvZGV5dW11ci1lMTk4MTAwNC1iOTE4LTRkMjMtYTMxYS0yZDEwMDg5MGQ5OWUucG5nIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.VDKWvXzTLceHc_32HT_0gfKyB2t-eiSB5A7HML04cVs' />
-								</div>
-							</div>
-							<div className='box-input'>
-								<TextField 
-								fullWidth
-								placeholder='Type use, click on search'
-									textFieldColors={{
-										neutral: {
-											textColor: appConfig.theme.colors.neutrals[200],
-											mainColor: appConfig.theme.colors.neutrals[900],
-											mainColorHighlight: '#F2C9CC',
-											backgroundColor: '#242642',
-										},
-									}}
-									styleSheet={{
-										display:'flex',
-										margin: 'auto',
-										padding: '11px',
-									}}
-									onChange={function changeWhatItWasTyped(event) {
-										const newInput = event.target.value
-										if (newInput.length >= 2) {
-											setUsername(newInput)
-											setVisible('hidden')
-											setLink(`https://github.com/${newInput}.png`)
-										} else {
-											setUsername('')
-											setVisibilityBox('none')
-											setVisible('visible')
-											setLink('https://i.pinimg.com/originals/d3/82/6a/d3826a943b0d3a9d54ec3d3cba01d0ef.png')
-										}
-									}
-									}
-								>	
-								</TextField>
-								<ButtonSend text='🔎'></ButtonSend>
-							</div>
-							<SetInvalidUserName visible={visible}></SetInvalidUserName>
-							<Button
-								type='submit'
-								label='Entrar'
-								fullWidth
-								buttonColors={{
-									contrastColor: appConfig.theme.colors.neutrals["000"],
-									mainColor: '#2947A3',
-									mainColorLight: appConfig.theme.colors.primary[400],
-									mainColorStrong: '#101D41',
-								}}
-								styleSheet={{
-									borderRadius: '15px',
-									border: 'solid 2px rgb(36, 38, 66 / 20%)'
-								}}
-							/>
-						</Box>
-
-						{/* Photo Area */}
+				{/* <Box styleSheet={{
+					display: 'block'
+				}}> */}
+					{/*TO-DO-Fazer botão de tema escuro*/}
+					<Box styleSheet={{display:'flex', alighItems:'center',
+								alignItems: 'center',
+								justifyContent: 'space-between',
+								flexDirection: {
+									xs: 'column',
+									sm: 'row',
+								},
+								}}>
 						<Box
 							styleSheet={{
 								display: 'flex',
-								flexDirection: 'column',
 								alignItems: 'center',
-								maxWidth: '200px',
-								padding: '16px',
-								backgroundColor: '#242642',
-								border: '1px solid',
-								borderColor: appConfig.theme.colors.neutrals[999],
-								borderRadius: '20px',
-								flex: 1,
-								minHeight: '240px',
+								justifyContent: 'space-between',
+								flexDirection: {
+									xs: 'column',
+									sm: 'row',
+								},
+								width: '100%', maxWidth: '600px',
+								borderRadius: '20px', padding: '32px', margin: '16px',
+								boxShadow: '0 2px 10px 0 rgb(36, 38, 66 / 20%)',
+								backgroundColor: '#3F4273',
+								gridArea: 'box'
 							}}
 						>
-							<Text
-								variant="body4"
+							{/* Formulário */}
+							<Box
+								as="form"
+								onSubmit={
+									function clicked(event) {
+										console.log('fui clicado')
+										event.preventDefault()
+										
+										//mudando de página
+										routering.push(`/chat?username=${username}`)
+									}
+								}
 								styleSheet={{
-									color: appConfig.theme.colors.neutrals[200],
-									backgroundColor: '#161727',
-									padding: '3px 10px',
-									borderRadius: '1000px',
-									marginBottom: '20px'
+									display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+									width: { xs: '100%', sm: '50%' }, textAlign: 'center', marginBottom: '32px',
 								}}
 							>
-								{username}
-							</Text>
-							<a href={`https://github.com/${username}`}><Image
+								<div>
+									<div className='box-subtitle-title-and-img'>
+										<MyTitle tag="h2">Hey Adora!</MyTitle>
+										<Text variant="body3" styleSheet={{ marginBottom: '32px', color: appConfig.theme.colors.neutrals[300], display: 'inline-block', gridArea: 'text2' }}>
+											{appConfig.name}
+										</Text>
+										<img className='img-catra' src='https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/75eafe9f-a87c-45fa-b6bb-328c9e7b76f9/deyumur-e1981004-b918-4d23-a31a-2d100890d99e.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzc1ZWFmZTlmLWE4N2MtNDVmYS1iNmJiLTMyOGM5ZTdiNzZmOVwvZGV5dW11ci1lMTk4MTAwNC1iOTE4LTRkMjMtYTMxYS0yZDEwMDg5MGQ5OWUucG5nIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.VDKWvXzTLceHc_32HT_0gfKyB2t-eiSB5A7HML04cVs' />
+									</div>
+								</div>
+								<div className='box-input'>
+									<TextField 
+									fullWidth
+									placeholder='Type use, click on search'
+										textFieldColors={{
+											neutral: {
+												textColor: appConfig.theme.colors.neutrals[200],
+												mainColor: appConfig.theme.colors.neutrals[900],
+												mainColorHighlight: '#F2C9CC',
+												backgroundColor: '#242642',
+											},
+										}}
+										styleSheet={{
+											display:'flex',
+											margin: 'auto',
+											padding: '11px',
+										}}
+										onChange={function changeWhatItWasTyped(event) {
+											const newInput = event.target.value
+											
+											if (newInput.length >= 2)  {
+												setUsername(newInput)
+												// getUserData()
+												// getUserFriends()
+												setVisible('hidden')
+												setLink(`https://github.com/${newInput}.png`)
+											} else {
+												setValidUser(false)
+												setUsername('')
+												setVisibilityBox('none')
+												setVisible('visible')
+												setLink('https://i.pinimg.com/originals/d3/82/6a/d3826a943b0d3a9d54ec3d3cba01d0ef.png')
+											}
+										}
+										}
+									>	
+									</TextField>
+									<ButtonSearch text='🔎'></ButtonSearch>
+								</div>
+								<SetInvalidUserName visible={visible}></SetInvalidUserName>
+								{isValidUser === false ?
+									<Button
+										type='submit'
+										label='Entrar'
+										fullWidth
+										disabled
+										buttonColors={{
+											contrastColor: appConfig.theme.colors.neutrals["000"],
+											mainColor: '#2947A3',
+											mainColorLight: appConfig.theme.colors.primary[400],
+											mainColorStrong: '#101D41',
+										}}
+										styleSheet={{
+											borderRadius: '15px',
+											border: 'solid 2px rgb(36, 38, 66 / 20%)'
+										}}
+									/>
+									:
+									<Button
+										type='submit'
+										label='Entrar'
+										fullWidth
+										buttonColors={{
+											contrastColor: appConfig.theme.colors.neutrals["000"],
+											mainColor: '#2947A3',
+											mainColorLight: appConfig.theme.colors.primary[400],
+											mainColorStrong: '#101D41',
+										}}
+										styleSheet={{
+											borderRadius: '15px',
+											border: 'solid 2px rgb(36, 38, 66 / 20%)'
+										}}
+									/>
+								}
+							</Box>
+
+							{/* Photo Area */}
+							<Box
 								styleSheet={{
-									borderRadius: '50%',
-									marginBottom: '16px',
+									display: 'flex',
+									flexDirection: 'column',
+									alignItems: 'center',
+									maxWidth: '200px',
+									padding: '16px',
+									backgroundColor: '#242642',
+									border: '1px solid',
+									borderColor: appConfig.theme.colors.neutrals[999],
+									borderRadius: '20px',
+									flex: 1,
+									minHeight: '240px',
 								}}
-								src={link}
-							/></a>
-							<Box>
-								<SectionInfoUser followers={ctx.userData?.followers} following={ctx.userData?.following } repos={ctx.userData?.public_repos}></SectionInfoUser>
+							>
+								<Text
+									variant="body4"
+									styleSheet={{
+										color: appConfig.theme.colors.neutrals[200],
+										backgroundColor: '#161727',
+										padding: '3px 10px',
+										borderRadius: '1000px',
+										marginBottom: '20px'
+									}}
+								>
+									{username}
+								</Text>
+								<a href={`https://github.com/${username}`}><Image
+									styleSheet={{
+										borderRadius: '50%',
+										marginBottom: '16px',
+									}}
+									src={link}
+								/></a>
+								<Box>
+									<SectionInfoUser followers={ctx.userData?.followers} following={ctx.userData?.following } repos={ctx.userData?.public_repos}></SectionInfoUser>
+								</Box>
 							</Box>
 						</Box>
-					</Box>
-					<Box styleSheet={{display: visibilityBox,maxWidth:'165px', maxHeight:'350px', width:'100%', height:'100%', backgroundColor: 'rgba(63, 66, 115, 0.9)', borderRadius: '20px'}}>
-							<Box styleSheet={{display: 'flex', alignItems: 'center'}}>
-								<Text styleSheet={{ color: 'white', fontSize: '20px', textAlign: 'center', marginLeft: '5px', marginRight: '10px', fontWeight:'600'}}>Friends</Text>
-								<Image src='https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/75eafe9f-a87c-45fa-b6bb-328c9e7b76f9/deyz32k-b7cccebd-be45-4423-8b80-b08287369d20.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzc1ZWFmZTlmLWE4N2MtNDVmYS1iNmJiLTMyOGM5ZTdiNzZmOVwvZGV5ejMyay1iN2NjY2ViZC1iZTQ1LTQ0MjMtOGI4MC1iMDgyODczNjlkMjAucG5nIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.5FXcf4DSnuSyfDluwZ2GRxh_qZ7Nw-Uooa8af4OKsaQ' width='65' height='55' />
-							</Box>
-							<Box >
-								<a href={infoFriends.link_friends[0]} ><SmallBox image={infoFriends.img_friends[0]} visibility='block'></SmallBox></a>
-								<a href={infoFriends.link_friends[1]} ><SmallBox image={infoFriends.img_friends[1]}  visibility='block'></SmallBox></a>
-								<a href={infoFriends.link_friends[2]} ><SmallBox image={infoFriends.img_friends[2]}  visibility='block'></SmallBox></a>
-							</Box>
-					</Box>
+						<Box styleSheet={{display: visibilityBox,maxWidth:'165px', maxHeight:'350px', width:'100%', height:'100%', backgroundColor: 'rgba(63, 66, 115, 0.9)', borderRadius: '20px'}}>
+								<Box styleSheet={{display: 'flex', alignItems: 'center'}}>
+									<Text styleSheet={{ color: 'white', fontSize: '20px', textAlign: 'center', marginLeft: '5px', marginRight: '10px', fontWeight:'600'}}>Friends</Text>
+									<Image src='https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/75eafe9f-a87c-45fa-b6bb-328c9e7b76f9/deyz32k-b7cccebd-be45-4423-8b80-b08287369d20.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzc1ZWFmZTlmLWE4N2MtNDVmYS1iNmJiLTMyOGM5ZTdiNzZmOVwvZGV5ejMyay1iN2NjY2ViZC1iZTQ1LTQ0MjMtOGI4MC1iMDgyODczNjlkMjAucG5nIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.5FXcf4DSnuSyfDluwZ2GRxh_qZ7Nw-Uooa8af4OKsaQ' width='65' height='55' />
+								</Box>
+								<Box >
+									<a href={infoFriends.link_friends[0]} ><SmallBox image={infoFriends.img_friends[0]} visibility='block'></SmallBox></a>
+									<a href={infoFriends.link_friends[1]} ><SmallBox image={infoFriends.img_friends[1]}  visibility='block'></SmallBox></a>
+									<a href={infoFriends.link_friends[2]} ><SmallBox image={infoFriends.img_friends[2]}  visibility='block'></SmallBox></a>
+								</Box>
+						</Box>
+				{/* </Box> */}
 			</Box>
+			{/* <Box styleSheet={{
+						position: 'absolute', bottom: '0',
+						backgroundColor: '#3f4273', width: '100%', maxHeight: '30px', padding: '15px'
+						}}>
+			</Box> */}
 		</Box>
 		<style jsx>{`
 			.box-input{

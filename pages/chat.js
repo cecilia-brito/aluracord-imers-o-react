@@ -4,10 +4,13 @@ import appConfig from '../config.json';
 import { createClient, SupabaseClient} from '@supabase/supabase-js'
 import { useRouter } from 'next/router';
 import {ButtonSendSticker} from '../src/components/stickers'
+import ButtonChangeTheme from '../src/components/buttonChangeTheme';
+import { parseUrl } from 'next/dist/shared/lib/router/utils/parse-url';
 
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTY0MzQxNTkyMSwiZXhwIjoxOTU4OTkxOTIxfQ.b4ZDDcz0n_WuPBY__PJ4Lz3pPKSkoSK1twrh0KsUJtw'
 const SUPABASE_URL = 'https://mbkhhjsklhiyswdszgix.supabase.co'
 const SUPABASE_CLIENT = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+
 
 async function deleteMessageOnDatabase(id){
     try{
@@ -27,35 +30,71 @@ async function deleteMessageOnDatabase(id){
     
  }
 
-function listennerAddMessagesInRealTime(addMessage){
-    return SUPABASE_CLIENT
-            .from('messages')
-            .on('INSERT', (dataOnDatabase) => {
-                    console.log('o que veio, listenner', dataOnDatabase)
-                    console.log('new', dataOnDatabase.new)
-                    addMessage(dataOnDatabase.new)
-                }
-            ).subscribe()
-}
 
-function listennerRemoveMessagesInRealTime(removeMessage){
-    return (
-        SUPABASE_CLIENT
-            .from('messages')
-            .on('DELETE', (data) => {
-                    console.log(data.new)
-                    removeMessage(data.new)
-                }
-            )
-            .subscribe()
-    )
-}
+// function listennerRemoveMessagesInRealTime(removeMessage){
+//     return (
+//         SUPABASE_CLIENT
+//             .from('messages')
+//             .on('DELETE', (data) => {
+//                     console.log('data new',data.new)
+//                     console.log('data old',data.old)
+//                     // removeMessage(data.new)
+//                 }
+//             )
+//             .subscribe()
+//     )
+// }
 
 export default function ChatPage() {
     const userLogged = useRouter().query.username
     const [message, setMessage] = React.useState('');
     const [messagesList, setMessagesList] = React.useState([]);
     const [visibilityLoading, setVisibilityLoading] = React.useState('flex');
+
+    function updateDeleteItem(payload){
+        //  setMessagesList((messagesList) => { return messagesList });
+        //  console.log('list de messages', messagesList)
+        //  const newListMessage = messagesList
+        // console.log('new list message', newListMessage)
+        // // const index = messagesList.indexOf(payload.old)
+        setMessagesList((actualList) => {
+            for(let i = 0; i < actualList.length; i++){
+                if(actualList[i].id === payload.old){
+                    const newlist = actualList.splice(actualList[i]) 
+                    console.log(newlist)
+                    return [newlist]
+                }
+                console.log(actualList)
+            }
+        })
+    }
+
+    function listennerMessagesInRealTime(){
+        return SUPABASE_CLIENT
+                .from('messages')
+                .on('INSERT', (dataOnDatabase) => {
+                            console.log('novamensagem')
+                            console.log('lista de mensagens', messagesList)
+                            setMessagesList(
+                                (actualValueList) => {
+                                    return [dataOnDatabase.new, ...actualValueList]
+                                }
+                            );
+                        }
+                        // console.log('OLD', dataOnDatabase.old)
+                        // addMessage(dataOnDatabase.new)
+                ).on('DELETE', (payload) =>{
+                    console.log('paylooad', payload)
+                    // console.log('index: ', index)
+                    // // console.log(`new list message[${i}]: ${newListMessage[i]}`)
+                    // newListMessage.splice(index)
+                    // console.log('new list de message depois do slice:', newListMessage)
+                    // setMessagesList(newListMessage)
+                    updateDeleteItem(payload)
+                    console.log('rodou!')
+                }
+                ).subscribe()
+    }
 
     React.useEffect(() => { 
         SUPABASE_CLIENT
@@ -67,17 +106,7 @@ export default function ChatPage() {
                 setMessagesList(data)
             });
 
-            listennerAddMessagesInRealTime(
-                (newMessage) => {
-                    console.log('novamensagem')
-                    console.log('lista de mensagens', messagesList)
-                    setMessagesList(
-                        (actualValueList) => {
-                            return [newMessage, ...actualValueList]
-                        }
-                    );
-                }
-            ); 
+            listennerMessagesInRealTime(); 
     }, []);
 
     // React.useEffect(() => {
@@ -102,10 +131,12 @@ export default function ChatPage() {
     //     })
     // }, []);
 
+
+    // listennerRemoveMessagesInRealTime()
     function LoadingChat(props){
         setTimeout(() =>{
             setVisibilityLoading('none')
-        }, 6000)
+        }, 5000)
             return(
                 <>
                     <div className='box'>
@@ -219,6 +250,7 @@ export default function ChatPage() {
 
 
     return (
+        
         <Box
             styleSheet={{
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -227,6 +259,12 @@ export default function ChatPage() {
                 color: appConfig.theme.colors.neutrals['000'],
             }}
         >
+            {/* <Box styleSheet={{
+            position: 'absolute', top: '0',
+            backgroundColor: '#3f4273', width: '100%', maxHeight: '30px'
+            }}>
+                <ButtonChangeTheme></ButtonChangeTheme>
+            </Box> */}
             <Box
                 styleSheet={{
                     display: 'flex',
@@ -241,7 +279,8 @@ export default function ChatPage() {
                     padding: '32px',
                 }}
             >
-                <Header />
+              
+                <Header></Header>
                 <Box
                     styleSheet={{
                         position: 'relative',
@@ -322,12 +361,15 @@ function Header() {
                 <Text variant='heading5'>
                     Chat
                 </Text>
+                <Box styleSheet={{display: 'flex', alignItems: 'center'}}>
+                <ButtonChangeTheme></ButtonChangeTheme>
                 <Button
                     variant='tertiary'
                     colorVariant='neutral'
                     label='Logout'
                     href="/"
                 />
+                </Box>
             </Box>
         </>
     )
@@ -362,6 +404,7 @@ function MessageList(props) {
                                             console.log(`new list message[${i}]: ${newListMessage[i]}`)
                                             newListMessage.splice(index)
                                             console.log('new list de message depois do slice:', newListMessage)
+                                            // console.log(event.target.parentElement.parentElement.removeChild())
                                             event.target.parentElement.parentElement.remove()
                                             props.set(newListMessage)
                                         }    
@@ -462,7 +505,7 @@ function MessageList(props) {
                                             }}
                                             tag="span"
                                         >
-                                            {(new Date().toLocaleDateString() + ' - ' + new Date().getHours() + ' : ' + new Date().getMinutes())}
+                                            {(new Date().toLocaleDateString() + ' - ' + new Date().getHours() + ' : ' + new Date().getMinutes()).toString()}
                                         </Text>
                                     </div>
                                     </Box>
