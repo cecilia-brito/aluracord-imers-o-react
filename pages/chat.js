@@ -408,19 +408,6 @@ function Header() {
 }
 
 function MessageList(props) {
-    function elementIsHover(event){
-        const element = event.target.nextSibling.children[0]
-        if(event._reactName == 'onMouseEnter' && element !== null){
-            element.style.visibility = 'visible'   
-        }
-    }
-    function elementNotIsHover(event){
-        const element = event.target.nextSibling.children[0]
-        if(event._reactName == 'onMouseLeave' && element !== null && element !== event.target){
-            element.style.visibility = 'hidden'   
-        }
-    }
-
 
     function DeleteButton(actualMessage){    
         return (
@@ -480,6 +467,28 @@ function MessageList(props) {
 
             {props.messages.map(
                 (actualMessage) => {
+                    function elementNotIsHover(event){
+                        console.log(event.target)
+                        console.log(actualMessage.whoSended)
+                        console.log(props.userLogged)
+                        if(event._reactName == 'onMouseLeave' && actualMessage.whoSended  == props.userLogged){
+                            const element = event.target.nextSibling.children[0]
+                            if(element !== null){
+                                console.log(element)
+                                element.style.visibility = 'hidden'   
+                            }
+                        }
+                    }
+                    function elementIsHover(event){
+                        console.log(event.target)
+                        if(event._reactName == 'onMouseEnter' &&  actualMessage.whoSended== props.userLogged){
+                            const element = event.target.nextSibling.children[0]
+                            if(element !== null){
+                                console.log(element)
+                                element.style.visibility = 'visible'   
+                            }
+                        }
+                    }
                     return (
                         <Box className='box-message' styleSheet={{
                             display: 'flex',
