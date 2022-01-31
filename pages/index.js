@@ -4,7 +4,6 @@ import React, { useContext } from 'react'
 import { useRouter} from 'next/router'
 import api from '../src/services'
 import { context } from '../src/context';
-import ButtonChangeTheme from '../src/components/buttonChangeTheme';
 
 function MyTitle(props) {
 	const Tag = props.tag || 'h1';
@@ -39,7 +38,6 @@ export default function HomePage() {
 
 	
 	async function getUserData(){
-		// try{
 			const response_user = await api.get(`/${username}`)
 			ctx.setUserData(response_user.data)
 			if(ctx.message !== undefined){
@@ -49,37 +47,22 @@ export default function HomePage() {
 				setValidUser(true)
 				console.log('ctxuser: ', ctx.userData)
 				setCaptured(true)
-				// getUserFriends()
-				// getUserFriends()
 			}
 			console.log('ctxuser: ', ctx.userData)
 			return captured;
-		// }catch(err){
-		// 	console.log(err)
-		// }
 	}
 
 	async function getUserFriends(){
 			const response_user_followers = await api.get(`/${username}/followers`)
 			ctx.setUserFriends(response_user_followers.data)
-			// ctx.setUserFriends(response_user_followers.data)
 			console.log(ctx.userFriends)
 				if(ctx.userData.followers === 0 || ctx.userFriends.message !== undefined){
 					setVisibilityBox('none')
 				} else{
 					sorteioDasImagensFriends()
-					// setInfoFriends(
-					// 	{	
-					// 		img_friends: [`https://github.com/${ctx.userFriends[0]?.login}.png`,`https://github.com/${ctx.userFriends[1]?.login}.png`,`https://github.com/${ctx.userFriends[2]?.login}.png`],
-					// 		link_friends: [`https://github.com/${ctx.userFriends[0]?.login}`, `https://github.com/${ctx.userFriends[1]?.login}`, `https://github.com/${ctx.userFriends[2]?.login}`]
-					// 	}
-					// )
 					console.log(ctx.userFriends)
 					setVisibilityBox('block')
 				}
-			// } else{
-			// 	setVisibilityBox('none')
-			// }
 			console.log('user friends', ctx.userFriends)
 			console.log('get user friends rodou')
 	}
@@ -89,7 +72,6 @@ export default function HomePage() {
 
 		for(let i = 0; i <= 2; i++){
 			indexs.push(parseInt(Math.random() * 30))
-			// seed = new Date.getHours()
 			while(indexs[i] == indexs[i-1] || indexs[i] == indexs[i+1])
 			indexs[i] = (parseInt(Math.random() * 30))
 		}
@@ -174,8 +156,6 @@ export default function HomePage() {
 															getUserFriends()
 
 														}
-													// getUserFriends()
-												
 						}>{props.text}</button>
 					<style jsx>{`
 						.button_serch{
@@ -224,12 +204,6 @@ export default function HomePage() {
 
 	return (
 		<>
-			{/* <Box styleSheet={{
-						position: 'absolute', top: '0',
-						backgroundColor: '#3f4273', width: '100%', maxHeight: '30px'
-						}}>
-					<ButtonChangeTheme></ButtonChangeTheme>
-			</Box> */}
 			<Box
 				styleSheet={{
 					display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -237,10 +211,6 @@ export default function HomePage() {
 					backgroundRepeat: 'no-repeat', backgroundSize: 'auto', backgroundBlendMode: 'multiply',
 				}}
 			>
-				{/* <Box styleSheet={{
-					display: 'block'
-				}}> */}
-					{/*TO-DO-Fazer botão de tema escuro*/}
 					<Box styleSheet={{display:'flex', alighItems:'center',
 								alignItems: 'center',
 								justifyContent: 'space-between',
@@ -418,13 +388,7 @@ export default function HomePage() {
 									<a href={infoFriends.link_friends[2]} ><SmallBox image={infoFriends.img_friends[2]}  visibility='block'></SmallBox></a>
 								</Box>
 						</Box>
-				{/* </Box> */}
 			</Box>
-			{/* <Box styleSheet={{
-						position: 'absolute', bottom: '0',
-						backgroundColor: '#3f4273', width: '100%', maxHeight: '30px', padding: '15px'
-						}}>
-			</Box> */}
 		</Box>
 		<style jsx>{`
 			.box-input{

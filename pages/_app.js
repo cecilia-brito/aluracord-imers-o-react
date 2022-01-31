@@ -1,5 +1,7 @@
+import { ContextTheme } from "../src/components/buttonChangeTheme";
 import { ContextProvider } from "../src/context";
 import { context } from "../src/context";
+import {ThemeContext } from "../src/components/buttonChangeTheme"
 
 function GlobalStyle(props){
     return (
@@ -35,8 +37,10 @@ export default function MyApp({ Component, pageProps }) {
         <>
             <ContextProvider>
             <GlobalStyle />
+            <ContextTheme>
             {/* <ButtonChangeTheme/> */}
             <Component {...pageProps} />
+            </ContextTheme>
             </ContextProvider>
         </>
     )

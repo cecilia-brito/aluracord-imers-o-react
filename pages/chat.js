@@ -1,21 +1,20 @@
 import { Box, Text, TextField, Image, Button } from '@skynexui/components';
-import React from 'react';
+import React, { useContext } from 'react';
 import appConfig from '../config.json';
-import { createClient, SupabaseClient} from '@supabase/supabase-js'
+import { createClient} from '@supabase/supabase-js'
 import { useRouter } from 'next/router';
 import {ButtonSendSticker} from '../src/components/stickers'
-import ButtonChangeTheme from '../src/components/buttonChangeTheme';
-import { parseUrl } from 'next/dist/shared/lib/router/utils/parse-url';
+import { ButtonChangeTheme } from '../src/components/buttonChangeTheme';
+import { ThemeContext } from '../src/components/buttonChangeTheme';
 
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTY0MzQxNTkyMSwiZXhwIjoxOTU4OTkxOTIxfQ.b4ZDDcz0n_WuPBY__PJ4Lz3pPKSkoSK1twrh0KsUJtw'
 const SUPABASE_URL = 'https://mbkhhjsklhiyswdszgix.supabase.co'
 const SUPABASE_CLIENT = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
 
 
+// console.log(Theme)
 async function deleteMessageOnDatabase(id){
     try{
-        // console.log(messagesList.indexOf(id))
-        // indexMessageDelete = messagesList.indexOf(id)
         const whatDelete = 
             await SUPABASE_CLIENT
                 .from('messages')
@@ -30,58 +29,14 @@ async function deleteMessageOnDatabase(id){
     
  }
 
-
-// function listennerRemoveMessagesInRealTime(removeMessage){
-//     return (
-//         SUPABASE_CLIENT
-//             .from('messages')
-//             .on('DELETE', (data) => {
-//                     console.log('data new',data.new)
-//                     console.log('data old',data.old)
-//                     // removeMessage(data.new)
-//                 }
-//             )
-//             .subscribe()
-//     )
-// }
-
 export default function ChatPage() {
+
     const userLogged = useRouter().query.username
     const [message, setMessage] = React.useState('');
     const [messagesList, setMessagesList] = React.useState([]);
     const [visibilityLoading, setVisibilityLoading] = React.useState('flex');
     let newListListenner = [];
-
-    function updateDeleteItem(payload){
-        //  setMessagesList((messagesList) => { return messagesList });
-        //  console.log('list de messages', messagesList)
-        //  const newListMessage = messagesList
-        // console.log('new list message', newListMessage)
-        // // const index = messagesList.indexOf(payload.old)
-        // setMessagesList((actualList) => {
-        //     // for(let i = 0; i < actualList.length; i++){
-        //         // actualList.map( 
-        //         //     () =>{             
-        //         //         if(actualList[i].id === payload.old){
-        //         //             const newlist = actualList.splice(actualList[i]) 
-        //         //             console.log(newlist)
-        //         //             return [newlist]
-        //         //         }
-        //         //         i++
-        //         //     }
-        //         // )
-        //         console.log(actualList)
-            // }
-        // })
-
-        // for(let i = 0; i < newListListenner.length; i++){
-        //     if(newListListenner[i].id == payload.old){
-        //         console.log(newListListenner[i])
-        //         // const index = actualList[i].indexOf(payload.old)
-        //         newListListenner.splice(i)
-        //     }
-        // }
-    }
+    const Theme = useContext(ThemeContext)
 
     function listennerMessagesInRealTime(){
         return SUPABASE_CLIENT
@@ -95,8 +50,6 @@ export default function ChatPage() {
                                 }
                             );
                         }
-                        // console.log('OLD', dataOnDatabase.old)
-                        // addMessage(dataOnDatabase.new)
                 ).on('DELETE', (payload) => {
                     console.log('paylooad', payload)
                     setMessagesList(
@@ -107,18 +60,10 @@ export default function ChatPage() {
                         }
                     )
                     console.log(newListListenner)
-                    // updateDeleteItem(payload)
                     newListListenner = newListListenner.filter(
                         (item) => (item.id !== payload.old.id))
                     console.log(newListListenner)
                     setMessagesList(newListListenner)
-                    // console.log('messageslist', messagesList)
-                    // console.log('index: ', index)
-                    // // console.log(`new list message[${i}]: ${newListMessage[i]}`)
-                    // newListMessage.splice(index)
-                    // console.log('new list de message depois do slice:', newListMessage)
-                    // setMessagesList(newListMessage)
-                    // updateDeleteItem(payload)
                     console.log('rodou!')
                 }).subscribe()
     }
@@ -139,30 +84,7 @@ export default function ChatPage() {
             // listenner.unsubscribe() 
     }, []);
 
-    // React.useEffect(() => {
-    //     SUPABASE_CLIENT
-    //         .from('messages')
-    //         .select('*')
-    //         .order('id', {ascending: false})
-    //         .then(({data})=>{
-    //             console.log('dados', data)
-    //             setMessagesList(data)
-    //         });
 
-    //     listennerRemoveMessagesInRealTime((deleteMessage) => {
-    //         const newListMessage = messagesList;
-    //         console.log('new list message', newListMessage)
-    //         const index = messagesList.indexOf(deleteMessage)
-    //         console.log('index: ', index)
-    //         // console.log(`new list message[${i}]: ${newListMessage[i]}`)
-    //         newListMessage.splice(index)
-    //         console.log('new list de message depois do slice:', newListMessage)
-    //         setMessagesList(newListMessage)
-    //     })
-    // }, []);
-
-
-    // listennerRemoveMessagesInRealTime()
     function LoadingChat(props){
         setTimeout(() =>{
             setVisibilityLoading('none')}, props.time)
@@ -182,7 +104,7 @@ export default function ChatPage() {
                         .box{
                             width: 100%;
                             height: 100%;
-                            background-color: #242642; 
+                            background-color: ${Theme.Theme.two}; 
                             z-index: 1000;
                             position: absolute
                             margin: auto;
@@ -193,16 +115,13 @@ export default function ChatPage() {
                         }
 
                         .box-text{
-                            // display:${props.visible === 'transparent' ? 'hidden' : 'block'}
                             color: white;
-                            // background: ${props.visible}
                         }
                         .box-img-text{
                             width: 200px;
                             font-size: 12px;
                             font-weight: 600;
                             opacity: 60%;
-                            // display:${props.visible === 'transparent' ? 'hidden' : 'block'}
                         }
 
                         @keyframes sword{
@@ -214,7 +133,6 @@ export default function ChatPage() {
                         }
 
                         img{
-                            // display:${props.visible === 'transparent' ? 'hidden' : 'block'}
                             margin: 10px auto;
                             filter: grayscale(50%);
                             animation-name: sword;
@@ -273,11 +191,7 @@ export default function ChatPage() {
                 console.log('criando mensagem', data)
             })
 
-        // if(message.text !== ''){
-        //     setMessagesList([message, ...messagesList])
             setMessage('')
-        // }
-        
     }
 
 
@@ -286,17 +200,11 @@ export default function ChatPage() {
         <Box
             styleSheet={{
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                backgroundImage: `url(https://i.imgur.com/tNAIOA8.png)`,
+                backgroundImage: `url(${Theme.Theme.background})`,
                 backgroundRepeat: 'no-repeat', backgroundSize: 'cover', backgroundBlendMode: 'multiply',
                 color: appConfig.theme.colors.neutrals['000'],
             }}
         >
-            {/* <Box styleSheet={{
-            position: 'absolute', top: '0',
-            backgroundColor: '#3f4273', width: '100%', maxHeight: '30px'
-            }}>
-                <ButtonChangeTheme></ButtonChangeTheme>
-            </Box> */}
             <Box
                 styleSheet={{
                     display: 'flex',
@@ -304,7 +212,7 @@ export default function ChatPage() {
                     flex: 1,
                     boxShadow: '0 2px 10px 0 rgb(0 0 0 / 20%)',
                     borderRadius: '20px',
-                    backgroundColor: '#161727',
+                    backgroundColor: Theme.Theme.colors.three,
                     height: '100%',
                     maxWidth: '95%',
                     maxHeight: '95vh',
@@ -319,7 +227,7 @@ export default function ChatPage() {
                         display: 'flex',
                         flex: 1,
                         height: '80%',
-                        backgroundColor: '#242642',
+                        backgroundColor: Theme.Theme.colors.one,
                         flexDirection: 'column',
                         borderRadius: '20px',
                         padding: '16px',
@@ -336,7 +244,7 @@ export default function ChatPage() {
                     >
                        
                     <Box styleSheet={{
-                        backgroundColor: '#424676',
+                        backgroundColor: Theme.Theme.colors.two,
                         width: '100%',
                         display: 'flex',
                         borderRadius: '20px',
@@ -366,7 +274,7 @@ export default function ChatPage() {
                                 resize: 'none',
                                 borderRadius: '20px',
                                 padding: '6px 8px',
-                                backgroundColor: '#424676',
+                                backgroundColor: Theme.Theme.colors.two,
                                 marginRight: '12px',
                                 color: 'rgba(255, 255, 255, 0.7)',
                             }}
@@ -408,7 +316,7 @@ function Header() {
 }
 
 function MessageList(props) {
-
+    const Theme = useContext(ThemeContext)
     function DeleteButton(actualMessage){    
         return (
             <div>
@@ -502,7 +410,7 @@ function MessageList(props) {
                             width: '100%',
                             borderRadius: '5px',
                             hover: {
-                                backgroundColor: '#161727'
+                                backgroundColor: Theme.Theme.colors.three
                             },
                             marginBottom: '12px',
                         }}
@@ -572,13 +480,6 @@ function MessageList(props) {
                 })
             }
             <style jsx>{`
-                // .button{
-                //     display: none;
-                //     color: red;
-                // }
-                // .box-message:hover .button{
-                //     display: block;
-                // }
                 a, a:visited, a:hover, a:active{
                     color: white;
                 }

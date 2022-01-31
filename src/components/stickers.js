@@ -1,10 +1,11 @@
 import React from 'react';
 import { Box, Button, Text, Image } from '@skynexui/components';
 import appConfig from '../../config.json';
+import { ThemeContext } from './buttonChangeTheme';
 
 export function ButtonSendSticker(props) {
   const [isOpen, setOpenState] = React.useState('');
-
+  const Theme = React.useContext(ThemeContext)
   return (
     <Box
       styleSheet={{
@@ -23,7 +24,7 @@ export function ButtonSendSticker(props) {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          backgroundColor: '#242642',
+          backgroundColor: Theme.Theme.colors.one,
           filter: isOpen ? 'grayscale(1)' : 'grayscale(0)' ,
           hover: {
             filter: 'grayscale(0)',
@@ -39,7 +40,7 @@ export function ButtonSendSticker(props) {
             flexDirection: 'column',
             borderRadius: '5px',
             position: 'absolute',
-            backgroundColor:'#242642',
+            backgroundColor: Theme.Theme.colors.one,
             width: {
               xs: '200px',
               sm: '290px',
