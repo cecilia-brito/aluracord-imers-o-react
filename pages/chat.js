@@ -50,6 +50,7 @@ export default function ChatPage() {
     const [message, setMessage] = React.useState('');
     const [messagesList, setMessagesList] = React.useState([]);
     const [visibilityLoading, setVisibilityLoading] = React.useState('flex');
+    let newListListenner = [];
 
     function updateDeleteItem(payload){
         //  setMessagesList((messagesList) => { return messagesList });
@@ -57,16 +58,29 @@ export default function ChatPage() {
         //  const newListMessage = messagesList
         // console.log('new list message', newListMessage)
         // // const index = messagesList.indexOf(payload.old)
-        setMessagesList((actualList) => {
-            // for(let i = 0; i < actualList.length; i++){
-                if(actualList.id === payload.old){
-                    const newlist = actualList.splice(actualList) 
-                    console.log(newlist)
-                    return [newlist]
-                }
-                console.log(actualList)
+        // setMessagesList((actualList) => {
+        //     // for(let i = 0; i < actualList.length; i++){
+        //         // actualList.map( 
+        //         //     () =>{             
+        //         //         if(actualList[i].id === payload.old){
+        //         //             const newlist = actualList.splice(actualList[i]) 
+        //         //             console.log(newlist)
+        //         //             return [newlist]
+        //         //         }
+        //         //         i++
+        //         //     }
+        //         // )
+        //         console.log(actualList)
             // }
-        })
+        // })
+
+        // for(let i = 0; i < newListListenner.length; i++){
+        //     if(newListListenner[i].id == payload.old){
+        //         console.log(newListListenner[i])
+        //         // const index = actualList[i].indexOf(payload.old)
+        //         newListListenner.splice(i)
+        //     }
+        // }
     }
 
     function listennerMessagesInRealTime(){
@@ -83,17 +97,30 @@ export default function ChatPage() {
                         }
                         // console.log('OLD', dataOnDatabase.old)
                         // addMessage(dataOnDatabase.new)
-                ).on('DELETE', (payload) =>{
+                ).on('DELETE', (payload) => {
                     console.log('paylooad', payload)
+                    setMessagesList(
+                        (actualList) => {
+                            console.log(actualList)
+                            newListListenner = actualList;
+                            return newListListenner;
+                        }
+                    )
+                    console.log(newListListenner)
+                    // updateDeleteItem(payload)
+                    newListListenner = newListListenner.filter(
+                        (item) => (item.id !== payload.old.id))
+                    console.log(newListListenner)
+                    setMessagesList(newListListenner)
+                    // console.log('messageslist', messagesList)
                     // console.log('index: ', index)
                     // // console.log(`new list message[${i}]: ${newListMessage[i]}`)
                     // newListMessage.splice(index)
                     // console.log('new list de message depois do slice:', newListMessage)
                     // setMessagesList(newListMessage)
-                    updateDeleteItem(payload)
+                    // updateDeleteItem(payload)
                     console.log('rodou!')
-                }
-                ).subscribe()
+                }).subscribe()
     }
 
     React.useEffect(() => { 
@@ -106,7 +133,10 @@ export default function ChatPage() {
                 setMessagesList(data)
             });
 
-            listennerMessagesInRealTime(); 
+            listennerMessagesInRealTime();
+
+            // const listenner = listennerMessagesInRealTime
+            // listenner.unsubscribe() 
     }, []);
 
     // React.useEffect(() => {
@@ -397,14 +427,14 @@ function MessageList(props) {
                                                 console.log(props.messages[i].id)
                                                 deleteMessageOnDatabase(props.messages[i].id)  
                                             }
-                                            const newListMessage = props.messages;
-                                            console.log('new list message', newListMessage)
-                                            const index = props.messages.indexOf(newListMessage[i])
-                                            console.log('index: ', index)
-                                            console.log(`new list message[${i}]: ${newListMessage[i]}`)
-                                            newListMessage.splice(index)
-                                            console.log('new list de message depois do slice:', newListMessage)
-                                            const element = event.target.parentElement.parentElement
+                                            // const newListMessage = props.messages;
+                                            // console.log('new list message', newListMessage)
+                                            // const index = props.messages.indexOf(newListMessage[i])
+                                            // console.log('index: ', index)
+                                            // console.log(`new list message[${i}]: ${newListMessage[i]}`)
+                                            // // newListMessage.splice(index)
+                                            // console.log('new list de message depois do slice:', newListMessage)
+                                            const element = event.target.parentNode.parentNode
                                             element.remove()
                                             // event.target.parentElement.parentElement.removeChild(event.target.parentElement.parentElement)
                                             // props.set(newListMessage)
