@@ -316,7 +316,7 @@ export default function HomePage() {
 										styleSheet={{
 											borderRadius: '15px',
 											border: 'solid 2px rgb(36, 38, 66 / 20%)',
-											maxWidth: '237px'
+											maxWidth: '268px'
 										}}
 									/>
 									:
@@ -378,7 +378,7 @@ export default function HomePage() {
 								</Box>
 							</Box>
 						</Box>
-						<Box styleSheet={{display: visibilityBox,maxWidth:'165px', maxHeight:'350px', width:'100%', height:'100%', backgroundColor: 'rgba(63, 66, 115, 0.9)', borderRadius: '20px'}}>
+						<Box styleSheet={{display: visibilityBox, maxWidth:'165px', maxHeight:'350px', width:'100%', height:'100%', backgroundColor: 'rgba(63, 66, 115, 0.9)', borderRadius: '20px'}}>
 								<Box styleSheet={{display: 'flex', alignItems: 'center'}}>
 									<Text styleSheet={{ color: 'white', fontSize: '20px', textAlign: 'center', marginLeft: '5px', marginRight: '10px', fontWeight:'600'}}>Friends</Text>
 									<Image src='https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/75eafe9f-a87c-45fa-b6bb-328c9e7b76f9/deyz32k-b7cccebd-be45-4423-8b80-b08287369d20.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzc1ZWFmZTlmLWE4N2MtNDVmYS1iNmJiLTMyOGM5ZTdiNzZmOVwvZGV5ejMyay1iN2NjY2ViZC1iZTQ1LTQ0MjMtOGI4MC1iMDgyODczNjlkMjAucG5nIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.5FXcf4DSnuSyfDluwZ2GRxh_qZ7Nw-Uooa8af4OKsaQ' width='65' height='55' />
