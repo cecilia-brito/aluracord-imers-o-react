@@ -433,7 +433,6 @@ function MessageList(props) {
                     div{
                         display: inline-block;
                         margin: 10px;
-                        visibility: hidden;
                     }
                     button{
                         border: none;
@@ -442,6 +441,7 @@ function MessageList(props) {
                         color: rgba(255, 255, 255, 0.5);
                         font-size: 32px;
                         display: inline-block;
+                        visibility: hidden;
                     }
                     button:hover{
                         transform: scale(1.2);
@@ -472,9 +472,10 @@ function MessageList(props) {
                         console.log(actualMessage.whoSended)
                         console.log(props.userLogged)
                         if(event._reactName == 'onMouseLeave' && actualMessage.whoSended === props.userLogged){
-                            const element = event.target.parentElement.children[1]
+                            const element = event.target.nextSibling.children[0]
                             console.log(element)
-                            if(element !== null){
+                            console.log(element.tagName)
+                            if(element !== null && element.tagName === 'BUTTON' ){
                                 console.log(element)
                                 element.style.visibility = 'hidden'   
                             }
@@ -485,9 +486,10 @@ function MessageList(props) {
                         console.log(actualMessage.whoSended)
                         console.log(props.userLogged)
                         if(event._reactName == 'onMouseEnter' &&  actualMessage.whoSended === props.userLogged){
-                            const element = event.target.parentElement.children[1]
+                            const element = event.target.nextSibling.children[0]
                             console.log(element)
-                            if(element !== null){
+                            console.log(element.tagName)
+                            if(element !== null && element.tagName === 'BUTTON'){
                                 console.log(element)
                                 element.style.visibility = 'visible'   
                             }
@@ -546,7 +548,7 @@ function MessageList(props) {
                                             }}
                                             tag="span"
                                         >
-                                            {actualMessage.created_at}
+                                            {(new Date(actualMessage.created_at)).toLocaleString()}
                                         </Text>
                                     </div>
                                     </Box>
