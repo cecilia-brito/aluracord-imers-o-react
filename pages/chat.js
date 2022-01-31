@@ -58,14 +58,14 @@ export default function ChatPage() {
         // console.log('new list message', newListMessage)
         // // const index = messagesList.indexOf(payload.old)
         setMessagesList((actualList) => {
-            for(let i = 0; i < actualList.length; i++){
-                if(actualList[i].id === payload.old){
-                    const newlist = actualList.splice(actualList[i]) 
+            // for(let i = 0; i < actualList.length; i++){
+                if(actualList.id === payload.old){
+                    const newlist = actualList.splice(actualList) 
                     console.log(newlist)
                     return [newlist]
                 }
                 console.log(actualList)
-            }
+            // }
         })
     }
 
@@ -404,9 +404,10 @@ function MessageList(props) {
                                             console.log(`new list message[${i}]: ${newListMessage[i]}`)
                                             newListMessage.splice(index)
                                             console.log('new list de message depois do slice:', newListMessage)
-                                            // console.log(event.target.parentElement.parentElement.removeChild())
-                                            event.target.parentElement.parentElement.remove()
-                                            props.set(newListMessage)
+                                            const element = event.target.parentElement.parentElement
+                                            element.remove()
+                                            // event.target.parentElement.parentElement.removeChild(event.target.parentElement.parentElement)
+                                            // props.set(newListMessage)
                                         }    
                                         i++
                                     }
