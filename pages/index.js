@@ -315,7 +315,8 @@ export default function HomePage() {
 										}}
 										styleSheet={{
 											borderRadius: '15px',
-											border: 'solid 2px rgb(36, 38, 66 / 20%)'
+											border: 'solid 2px rgb(36, 38, 66 / 20%)',
+											maxWidth: '237px'
 										}}
 									/>
 									:
