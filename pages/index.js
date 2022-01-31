@@ -181,8 +181,10 @@ export default function HomePage() {
 			<img src={props.image}/>
 		<style jsx>{`
 			.smallBox{
-				width: 110px;
-				height: 85px;
+				// margin-right: 50px;
+				// margin-left: 50px;
+				max-width: 80%;
+				height: 85.5px;
 				border-radius: 20px;
 				box-shadow: 0 2px 10px 0 rgba(36, 38, 66, 0.2);
 				border-left: solid 4px rgba(242, 201, 204, .7);
@@ -192,11 +194,22 @@ export default function HomePage() {
 			}
 
 			.smallBox img{
-				width: 102px;
-				height: 85px;
+				// max-width: 145px;
+				width: 100%;
+				height: 100%;
 				border-radius: 20px;
 			}
+			@media (max-width: 600px){
+				.smallBox{
+					max-width: 70px;
+					display: inline-block;
+					margin:0 20px
+				}
 
+				.smallBox img{
+					max-width: 65px
+				}
+			}
 		`}</style>
 		</div>
 		)
@@ -208,7 +221,7 @@ export default function HomePage() {
 				styleSheet={{
 					display: 'flex', alignItems: 'center', justifyContent: 'center',
 					backgroundImage: 'url(https://i.imgur.com/tNAIOA8.png)',
-					backgroundRepeat: 'no-repeat', backgroundSize: 'auto', backgroundBlendMode: 'multiply',
+					backgroundRepeat: 'no-repeat', backgroundSize: 'auto', backgroundBlendMode: 'multiply', backgroundSize: 'cover',
 				}}
 			>
 					<Box styleSheet={{display:'flex', alighItems:'center',
@@ -378,12 +391,13 @@ export default function HomePage() {
 								</Box>
 							</Box>
 						</Box>
-						<Box styleSheet={{display: visibilityBox, maxWidth:'165px', maxHeight:'350px', width:'100%', height:'100%', backgroundColor: 'rgba(63, 66, 115, 0.9)', borderRadius: '20px'}}>
-								<Box styleSheet={{display: 'flex', alignItems: 'center'}}>
+						<Box styleSheet={{display: visibilityBox, backgroundColor: 'rgba(63, 66, 115, 1)', borderRadius: '20px', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center',
+									width: { xs: '100%', sm: '50%' }}}>
+								<Box styleSheet={{display: 'flex', alignItems: 'center', textAlign: 'center', justifyContent:'center'}}>
 									<Text styleSheet={{ color: 'white', fontSize: '20px', textAlign: 'center', marginLeft: '5px', marginRight: '10px', fontWeight:'600'}}>Friends</Text>
 									<Image src='https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/75eafe9f-a87c-45fa-b6bb-328c9e7b76f9/deyz32k-b7cccebd-be45-4423-8b80-b08287369d20.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzc1ZWFmZTlmLWE4N2MtNDVmYS1iNmJiLTMyOGM5ZTdiNzZmOVwvZGV5ejMyay1iN2NjY2ViZC1iZTQ1LTQ0MjMtOGI4MC1iMDgyODczNjlkMjAucG5nIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.5FXcf4DSnuSyfDluwZ2GRxh_qZ7Nw-Uooa8af4OKsaQ' width='65' height='55' />
 								</Box>
-								<Box >
+								<Box className='box-friends'>
 									<a href={infoFriends.link_friends[0]} ><SmallBox image={infoFriends.img_friends[0]} visibility='block'></SmallBox></a>
 									<a href={infoFriends.link_friends[1]} ><SmallBox image={infoFriends.img_friends[1]}  visibility='block'></SmallBox></a>
 									<a href={infoFriends.link_friends[2]} ><SmallBox image={infoFriends.img_friends[2]}  visibility='block'></SmallBox></a>
@@ -417,6 +431,13 @@ export default function HomePage() {
 				max-width: 70px;
 				margin-top: 20px;
 			}
+
+			// @media (max-width: 600px){
+			// 	.box-friends{
+			// 		display: flex;
+			// 		margin-bottom: 200px;
+			// 	}
+			// }
 		`}</style>
 		</>
 	);
