@@ -165,19 +165,18 @@ export default function ChatPage() {
     // listennerRemoveMessagesInRealTime()
     function LoadingChat(props){
         setTimeout(() =>{
-            setVisibilityLoading('none')
-        }, 5000)
+            setVisibilityLoading('none')}, props.time)
             return(
                 <>
                     <div className='box'>
-                            <div className='box-img-text'>
-                                <div className='box-text'>
-                                    <h4>Estamos carregando o coração de etéria, aguarde</h4>
-                                </div>
-                                <div className='box-img'>
-                                <   img src='https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/75eafe9f-a87c-45fa-b6bb-328c9e7b76f9/dez0ntn-bd3a805f-5b7a-4fc2-ae48-8779319b4e0b.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzc1ZWFmZTlmLWE4N2MtNDVmYS1iNmJiLTMyOGM5ZTdiNzZmOVwvZGV6MG50bi1iZDNhODA1Zi01YjdhLTRmYzItYWU0OC04Nzc5MzE5YjRlMGIucG5nIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.mxNGTGzkb8VBmMvVkRYVzDbDRIKUzq6aVGsDZDTkvkw' width='20' height='80'/>
-                                </div>
+                        <div className='box-img-text'>
+                            <div className='box-text'>
+                                <h4>Estamos carregando o coração de Ethéria, aguarde</h4>
                             </div>
+                            <div className='box-img'>
+                            <img src='https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/75eafe9f-a87c-45fa-b6bb-328c9e7b76f9/dez0ntn-bd3a805f-5b7a-4fc2-ae48-8779319b4e0b.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzc1ZWFmZTlmLWE4N2MtNDVmYS1iNmJiLTMyOGM5ZTdiNzZmOVwvZGV6MG50bi1iZDNhODA1Zi01YjdhLTRmYzItYWU0OC04Nzc5MzE5YjRlMGIucG5nIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.mxNGTGzkb8VBmMvVkRYVzDbDRIKUzq6aVGsDZDTkvkw' width='20' height='80'/>
+                            </div>
+                        </div>
                     </div>
                     <style jsx>{`
                         .box{
@@ -194,14 +193,16 @@ export default function ChatPage() {
                         }
 
                         .box-text{
-                            display:block
+                            // display:${props.visible === 'transparent' ? 'hidden' : 'block'}
                             color: white;
+                            // background: ${props.visible}
                         }
                         .box-img-text{
                             width: 200px;
                             font-size: 12px;
                             font-weight: 600;
                             opacity: 60%;
+                            // display:${props.visible === 'transparent' ? 'hidden' : 'block'}
                         }
 
                         @keyframes sword{
@@ -213,6 +214,7 @@ export default function ChatPage() {
                         }
 
                         img{
+                            // display:${props.visible === 'transparent' ? 'hidden' : 'block'}
                             margin: 10px auto;
                             filter: grayscale(50%);
                             animation-name: sword;
@@ -323,9 +325,8 @@ export default function ChatPage() {
                         padding: '16px',
                     }}
                 >
-                  <LoadingChat visible={visibilityLoading}></LoadingChat>
+                     <LoadingChat visible={visibilityLoading} time={5000}></LoadingChat>
                 <MessageList userLogged={userLogged} messages ={messagesList} set={setMessagesList} />
-
                     <Box
                         as="form"
                         styleSheet={{
@@ -333,6 +334,7 @@ export default function ChatPage() {
                             alignItems: 'center',
                         }}
                     >
+                       
                     <Box styleSheet={{
                         backgroundColor: '#424676',
                         width: '100%',
@@ -406,44 +408,37 @@ function Header() {
 }
 
 function MessageList(props) {
+    function elementIsHover(event){
+        const element = event.target.nextSibling.children[0]
+        if(event._reactName == 'onMouseEnter' && element !== null){
+            element.style.visibility = 'visible'   
+        }
+    }
+    function elementNotIsHover(event){
+        const element = event.target.nextSibling.children[0]
+        if(event._reactName == 'onMouseLeave' && element !== null && element !== event.target){
+            element.style.visibility = 'hidden'   
+        }
+    }
 
-    const [isHover, setIsHover] = React.useState(false)
 
     function DeleteButton(actualMessage){    
         return (
             <div>
-                {/* deleta a mensagem no front-end */}
                 <button onClick={   
-                    (event) => {
+                    () => {
                         let i  = 0
                                 props.messages.map(
                                     () => {
                                         if(props.messages[i].id == actualMessage.id){
                                             console.log('uhuuuu!') 
-                                            if(props.messages.lenght > 1){
-                                                deleteMessageOnDatabase(props.messages[i].id)  
-                                            } else{
-                                                console.log(props.messages[i])
-                                                console.log(props.messages[i].id)
-                                                deleteMessageOnDatabase(props.messages[i].id)  
-                                            }
-                                            // const newListMessage = props.messages;
-                                            // console.log('new list message', newListMessage)
-                                            // const index = props.messages.indexOf(newListMessage[i])
-                                            // console.log('index: ', index)
-                                            // console.log(`new list message[${i}]: ${newListMessage[i]}`)
-                                            // // newListMessage.splice(index)
-                                            // console.log('new list de message depois do slice:', newListMessage)
-                                            const element = event.target.parentNode.parentNode
-                                            element.remove()
-                                            // event.target.parentElement.parentElement.removeChild(event.target.parentElement.parentElement)
-                                            // props.set(newListMessage)
+                                            deleteMessageOnDatabase(props.messages[i].id)  
                                         }    
                                         i++
                                     }
                                 )
                             }
-                        }> 
+                        }>
                     x
                 </button>
                 <style jsx>{`
@@ -451,6 +446,7 @@ function MessageList(props) {
                     div{
                         display: inline-block;
                         margin: 10px;
+                        visibility: hidden;
                     }
                     button{
                         border: none;
@@ -485,7 +481,7 @@ function MessageList(props) {
             {props.messages.map(
                 (actualMessage) => {
                     return (
-                        <Box styleSheet={{
+                        <Box className='box-message' styleSheet={{
                             display: 'flex',
                             justifyContent: 'space-between',
                             width: '100%',
@@ -494,8 +490,9 @@ function MessageList(props) {
                                 backgroundColor: '#161727'
                             },
                             marginBottom: '12px',
-                        }} onMouseEnter ={ () => { setIsHover(true)} }
-                            onMouseLeave = {() => {setIsHover(false)}}
+                        }}
+                            onMouseEnter ={  elementIsHover }
+                            onMouseLeave ={  elementNotIsHover}
                         >
                             <Text
                                 key = {actualMessage.id}
@@ -536,7 +533,7 @@ function MessageList(props) {
                                             }}
                                             tag="span"
                                         >
-                                            {(new Date().toLocaleDateString() + ' - ' + new Date().getHours() + ' : ' + new Date().getMinutes()).toString()}
+                                            {actualMessage.created_at}
                                         </Text>
                                     </div>
                                     </Box>
@@ -552,14 +549,21 @@ function MessageList(props) {
                                    
                                 actualMessage.text}
                             </Text>
-                        {actualMessage.whoSended === props.userLogged && isHover ? 
-                        <DeleteButton id={actualMessage.id}></DeleteButton>
+                        {actualMessage.whoSended == props.userLogged ? 
+                            <DeleteButton id={actualMessage.id} ></DeleteButton> 
                         : '' }
                      </Box>
                     )
                 })
             }
             <style jsx>{`
+                // .button{
+                //     display: none;
+                //     color: red;
+                // }
+                // .box-message:hover .button{
+                //     display: block;
+                // }
                 a, a:visited, a:hover, a:active{
                     color: white;
                 }
