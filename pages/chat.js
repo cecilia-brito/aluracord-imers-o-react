@@ -361,7 +361,7 @@ function MessageList(props) {
 }
 
     return (
-        <Box className='big-box'
+        <Box
             tag="ul"
             styleSheet={{
                 overflow: 'auto',

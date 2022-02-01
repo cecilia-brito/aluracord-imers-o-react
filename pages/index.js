@@ -24,50 +24,67 @@ function MyTitle(props) {
 }
 
 export default function HomePage() {
-	const [isClicked, setIsClicked] = React.useState(false)
 	const [isValidUser, setValidUser] = React.useState(false)
-	const [captured, setCaptured] = React.useState(false);
 	const ctx =  useContext(context);
 	const [username, setUsername] = React.useState('Adora?');
 	const routering = useRouter() 
 	const [visibilityBox, setVisibilityBox] = React.useState('none');
 	const [infoFriends, setInfoFriends] = React.useState({img_friends: ['', '', ''], link_friends: ['','',''], login_friends: ['', '', '']})
-	const [visible, setVisible] = React.useState('hidden')
+	const [visible, setVisible] = React.useState('none')
 	const [link, setLink] = React.useState(`https://64.media.tumblr.com/3e5489aa15d4dbe40d3b3eace94b5747/fc1cee0b79687753-53/s1280x1920/0d305a36f63d4404dfdd574cc9b61d04c1ec5271.jpg`)
-
-
 	
 	async function getUserData(){
+		console.log('username',username)
+			let value;
+			try{
 			const response_user = await api.get(`/${username}`)
 			ctx.setUserData(response_user.data)
-			if(ctx.message !== undefined){
-				setCaptured(false)
+			ctx.setUserData((actualvalue) =>{ 
+				value = actualvalue
+				return actualvalue})
+			console.log('dados do usuario no inicio', ctx.userData)
+			if(value.message !== undefined){
 				setValidUser(false)
+				setVisible('visible')
+				setVisibilityBox('none')
 			} else{
 				setValidUser(true)
 				console.log('ctxuser: ', ctx.userData)
-				setCaptured(true)
 			}
-			console.log('ctxuser: ', ctx.userData)
-			return captured;
+			console.log('dados do usuario no final ', ctx.userData)
+			}catch(error){
+				console.log(error)
+			setVisible('block')
+			setVisibilityBox('none')
+			return
+			}
 	}
 
 	async function getUserFriends(){
+		console.log('username',username)
+		try{
 			const response_user_followers = await api.get(`/${username}/followers`)
 			ctx.setUserFriends(response_user_followers.data)
-			console.log(ctx.userFriends)
+			console.log('dados userFriends no inio', response_user_followers.data)
 				if(ctx.userData.followers === 0 || ctx.userFriends.message !== undefined){
+					setVisible('block')
 					setVisibilityBox('none')
 				} else{
-					sorteioDasImagensFriends()
+					sorteioDasImagensFriends(response_user_followers.data)
 					console.log(ctx.userFriends)
 					setVisibilityBox('block')
 				}
-			console.log('user friends', ctx.userFriends)
+			console.log('dados dos amigos no final', ctx.userFriends)
 			console.log('get user friends rodou')
+		} catch(error){
+			console.log(error)
+			setVisible('block')
+			setVisibilityBox('none')
+			return
+		}
 	}
 
-	function sorteioDasImagensFriends(){
+	function sorteioDasImagensFriends(value){
 		const indexs = []
 
 		for(let i = 0; i <= 2; i++){
@@ -78,10 +95,11 @@ export default function HomePage() {
 		
 		setInfoFriends(
 			{	
-				img_friends: [`https://github.com/${ctx.userFriends[indexs[0]]?.login}.png`,`https://github.com/${ctx.userFriends[indexs[1]]?.login}.png`,`https://github.com/${ctx.userFriends[indexs[2]]?.login}.png`],
-				link_friends: [`https://github.com/${ctx.userFriends[indexs[0]]?.login}`, `https://github.com/${ctx.userFriends[indexs[1]]?.login}`, `https://github.com/${ctx.userFriends[indexs[2]]?.login}`]
+				img_friends: [`https://github.com/${value[indexs[0]]?.login}.png`,`https://github.com/${value[indexs[1]]?.login}.png`,`https://github.com/${value[indexs[2]]?.login}.png`],
+				link_friends: [`https://github.com/${value[indexs[0]]?.login}`, `https://github.com/${value[indexs[1]]?.login}`, `https://github.com/${value[indexs[2]]?.login}`]
 			}
 		)
+		console.log('objeto com as imagens e links depois da função de sorteio',infoFriends)
 	}
 
 	function SectionInfoUser(props){
@@ -136,9 +154,10 @@ export default function HomePage() {
 				<p>Nome de usuário inválido, não é possível buscar a foto</p>
 				<style jsx>{`
 					p{
+						display: ${props.visible};
 						font-family: sans-serif;
 						font-size: 10.5px;
-						visibility: ${props.visible};
+						// visibility: ${props.visible};
 						color: red;
 						margin: 2px auto;
 						opacity: 80%;
@@ -152,11 +171,15 @@ export default function HomePage() {
 		return(
 			<>
 				<span>
-					<button type='button' className='button_serch' onClick={() =>{	getUserData()
-															getUserFriends()
-
-														}
-						}>{props.text}</button>
+					<button type='button' className='button_serch' onClick={
+																				() =>{	
+																					getUserData()
+																					getUserFriends()
+																				}
+																			}
+					>
+						{props.text}
+					</button>
 					<style jsx>{`
 						.button_serch{
 							border: none;
@@ -194,7 +217,6 @@ export default function HomePage() {
 			}
 
 			.smallBox img{
-				// max-width: 145px;
 				width: 100%;
 				height: 100%;
 				border-radius: 20px;
@@ -296,15 +318,13 @@ export default function HomePage() {
 											
 											if (newInput.length >= 2)  {
 												setUsername(newInput)
-												// getUserData()
-												// getUserFriends()
-												setVisible('hidden')
+												setVisible('none')
 												setLink(`https://github.com/${newInput}.png`)
 											} else {
 												setValidUser(false)
 												setUsername('')
 												setVisibilityBox('none')
-												setVisible('visible')
+												setVisible('block')
 												setLink('https://i.pinimg.com/originals/d3/82/6a/d3826a943b0d3a9d54ec3d3cba01d0ef.png')
 											}
 										}
@@ -313,7 +333,7 @@ export default function HomePage() {
 									</TextField>
 									<ButtonSearch text='🔎'></ButtonSearch>
 								</div>
-								<SetInvalidUserName visible={visible}></SetInvalidUserName>
+								{isValidUser === false ? <SetInvalidUserName visible={visible}></SetInvalidUserName> : ''}
 								{isValidUser === false ?
 									<Button
 										type='submit'
@@ -329,7 +349,8 @@ export default function HomePage() {
 										styleSheet={{
 											borderRadius: '15px',
 											border: 'solid 2px rgb(36, 38, 66 / 20%)',
-											maxWidth: '268px'
+											maxWidth: '268px',
+											// marginTop: '20px'
 										}}
 									/>
 									:
@@ -416,6 +437,7 @@ export default function HomePage() {
 				max-width: 268px;
 				height: 100%;
 				width: 100%;
+				margin-bottom: 20px;
 			}
 			.box-subtitle-title-and-img{
 				display: grid;
@@ -432,12 +454,6 @@ export default function HomePage() {
 				margin-top: 20px;
 			}
 
-			// @media (max-width: 600px){
-			// 	.box-friends{
-			// 		display: flex;
-			// 		margin-bottom: 200px;
-			// 	}
-			// }
 		`}</style>
 		</>
 	);
