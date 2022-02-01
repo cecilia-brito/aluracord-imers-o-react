@@ -43,6 +43,10 @@ $ yarn dev
 
 ###
 
+## 📘Aprendizados
+
+###
+
 ## ☄Resultado
 
 <p>A página está hospedada na Vercel, <a href='aluracord-she-ra.vercel.app'>aqui</a></p>
