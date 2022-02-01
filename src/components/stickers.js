@@ -13,6 +13,7 @@ export function ButtonSendSticker(props) {
       }}
     >
       <Button
+        disabled = {props.enabled}
         styleSheet={{
           borderRadius: '50%',
           padding: '0 2px 0 0',

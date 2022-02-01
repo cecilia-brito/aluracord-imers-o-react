@@ -151,13 +151,12 @@ export default function HomePage() {
 	function SetInvalidUserName(props) {
 		return (
 			<span>
-				<p>Nome de usuário inválido, não é possível buscar a foto</p>
+				<p>Invalid username, cant't find photo</p>
 				<style jsx>{`
 					p{
 						display: ${props.visible};
 						font-family: sans-serif;
 						font-size: 10.5px;
-						// visibility: ${props.visible};
 						color: red;
 						margin: 2px auto;
 						opacity: 80%;
@@ -204,8 +203,6 @@ export default function HomePage() {
 			<img src={props.image}/>
 		<style jsx>{`
 			.smallBox{
-				// margin-right: 50px;
-				// margin-left: 50px;
 				max-width: 80%;
 				height: 85.5px;
 				border-radius: 20px;
@@ -243,10 +240,10 @@ export default function HomePage() {
 				styleSheet={{
 					display: 'flex', alignItems: 'center', justifyContent: 'center',
 					backgroundImage: 'url(https://i.imgur.com/tNAIOA8.png)',
-					backgroundRepeat: 'no-repeat', backgroundSize: 'auto', backgroundBlendMode: 'multiply', backgroundSize: 'cover',
+					backgroundRepeat: 'no-repeat', backgroundSize: 'cover', backgroundBlendMode: 'multiply'
 				}}
 			>
-					<Box styleSheet={{display:'flex', alighItems:'center',
+					<Box styleSheet={{display:'flex', alignItems:'center',
 								alignItems: 'center',
 								justifyContent: 'space-between',
 								flexDirection: {
@@ -349,14 +346,14 @@ export default function HomePage() {
 										styleSheet={{
 											borderRadius: '15px',
 											border: 'solid 2px rgb(36, 38, 66 / 20%)',
-											maxWidth: '268px',
-											// marginTop: '20px'
+											maxWidth: '240px',
+											width: '100%'
 										}}
 									/>
 									:
 									<Button
 										type='submit'
-										label='Entrar'
+										label='Sign In'
 										fullWidth
 										buttonColors={{
 											contrastColor: appConfig.theme.colors.neutrals["000"],
@@ -366,7 +363,9 @@ export default function HomePage() {
 										}}
 										styleSheet={{
 											borderRadius: '15px',
-											border: 'solid 2px rgb(36, 38, 66 / 20%)'
+											border: 'solid 2px rgb(36, 38, 66 / 20%)',
+											maxWidth: '240px',
+											width: '100%'
 										}}
 									/>
 								}
@@ -434,7 +433,7 @@ export default function HomePage() {
 				border-radius: 5px;
 				justify-content:space-between;
 				max-height: 40px;
-				max-width: 268px;
+				max-width: 235px;
 				height: 100%;
 				width: 100%;
 				margin-bottom: 20px;

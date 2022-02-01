@@ -11,8 +11,6 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5v
 const SUPABASE_URL = 'https://mbkhhjsklhiyswdszgix.supabase.co'
 const SUPABASE_CLIENT = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
 
-
-// console.log(Theme)
 async function deleteMessageOnDatabase(id){
     try{
         const whatDelete = 
@@ -30,7 +28,7 @@ async function deleteMessageOnDatabase(id){
  }
 
 export default function ChatPage() {
-
+    const [isEnable, setIsEnable] = React.useState(true)
     const userLogged = useRouter().query.username
     const [message, setMessage] = React.useState('');
     const [messagesList, setMessagesList] = React.useState([]);
@@ -86,8 +84,10 @@ export default function ChatPage() {
 
 
     function LoadingChat(props){
-        setTimeout(() =>{
-            setVisibilityLoading('none')}, props.time)
+        setTimeout(() => {
+            setVisibilityLoading('none')
+            setIsEnable(false)
+            }, props.time)
             return(
                 <>
                     <div className='box'>
@@ -136,27 +136,31 @@ export default function ChatPage() {
                             margin: 10px auto;
                             filter: grayscale(50%);
                             animation-name: sword;
-                            animation-duration: 6s;
-                            animation-delay: 0.5s
+                            animation-duration: 5s;
+                            animation-delay: 0.2s
                         }
                     `}</style>
                 </>
             )
     }
 
-    function ButtonSend(){
+    function ButtonSend(props){
         return(
             <>
-                <button type='button' onClick={
+                <button className='button' disabled={props.click}
+                         onClick={
                             () => {
-                                handleNewMessage(message)
+                                if(message != ''){
+                                    handleNewMessage(message)
+                                }
                             }
                         }>
                     <img src='https://icons.veryicon.com/png/o/object/lucq-backstage/send-out.png' width='40' height='40'/>
                 </button>
                 <style jsx>{`
                     button{
-                        background: transparent;
+                        background: none;
+                        // background-color: none;
                         border: none;
                         cursor: pointer;
                         display: flex;
@@ -169,7 +173,7 @@ export default function ChatPage() {
                         transform: scale(1.05);
                         opacity: 70%;
                     }
-                    button img{
+                    img{
                         filter: invert(100%);
                         opacity: 90%;
                     }
@@ -233,7 +237,7 @@ export default function ChatPage() {
                         padding: '16px',
                     }}
                 >
-                     <LoadingChat visible={visibilityLoading} time={5000}></LoadingChat>
+                <LoadingChat visible={visibilityLoading} time={5000}></LoadingChat>
                 <MessageList userLogged={userLogged} messages ={messagesList} set={setMessagesList} />
                     <Box
                         as="form"
@@ -250,12 +254,15 @@ export default function ChatPage() {
                         borderRadius: '20px',
                         padding: '2px'
                     }}>
-                        <TextField
+                        <TextField 
+                            disabled ={isEnable}
                             value = {message}
                             onChange={
                                 function changeMessage(event) {
                                     const value = event.target.value
-                                    setMessage(value)
+                                    if(value !== ''){
+                                        setMessage(value)
+                                    }
                                 }
                             }
                             onKeyPress={
@@ -266,7 +273,7 @@ export default function ChatPage() {
                                     }
                                 }
                             }
-                            placeholder="Insira sua messagem aqui..."
+                            placeholder="Type your message here..."
                             type="textarea"
                             styleSheet={{
                                 width: '100%',
@@ -280,12 +287,14 @@ export default function ChatPage() {
                             }}
                         >
                         </TextField>
-                        <ButtonSendSticker onStickerClick={
+                        <ButtonSendSticker enabled ={isEnable} onStickerClick={
                             (sticker) => {
                                 handleNewMessage(':sticker:'+ sticker)
                             }
                         }/>
-                        <ButtonSend></ButtonSend>
+                        { isEnable === false ?
+                        <ButtonSend></ButtonSend>: ''
+                        }   
                     </Box>
                     </Box>
                 </Box>
@@ -375,106 +384,96 @@ function MessageList(props) {
 
             {props.messages.map(
                 (actualMessage) => {
+
                     function elementNotIsHover(event){
-                        console.log(event.target)
-                        console.log(actualMessage.whoSended)
-                        console.log(props.userLogged)
-                        if(event._reactName == 'onMouseLeave' && actualMessage.whoSended === props.userLogged){
-                            const element = event.target.nextSibling.children[0]
-                            console.log(element)
-                            console.log(element.tagName)
-                            if(element !== null && element.tagName === 'BUTTON' ){
-                                console.log(element)
+                        if(event._reactName == 'onMouseLeave' && actualMessage.whoSended === props.userLogged && event.target.tagName == 'DIV'){
+                            const element = event.target.children[0].lastChild.lastChild
+                            if(element !== null && element !== undefined && element.tagName === "BUTTON"){
                                 element.style.visibility = 'hidden'   
                             }
                         }
                     }
                     function elementIsHover(event){
-                        console.log(event.target)
-                        console.log(actualMessage.whoSended)
-                        console.log(props.userLogged)
-                        if(event._reactName == 'onMouseEnter' &&  actualMessage.whoSended === props.userLogged){
-                            const element = event.target.nextSibling.children[0]
-                            console.log(element)
-                            console.log(element.tagName)
-                            if(element !== null && element.tagName === 'BUTTON'){
-                                console.log(element)
+                        if(event._reactName == 'onMouseEnter' &&  actualMessage.whoSended === props.userLogged && event.target.tagName == 'DIV'){
+                            const element = event.target.children[0].lastChild.lastChild
+                            if(element !== null && element !== undefined && element.tagName === "BUTTON"){
                                 element.style.visibility = 'visible'   
                             }
                         }
                     }
                     return (
-                        <Box className='box-message' styleSheet={{
-                            display: 'flex',
-                            justifyContent: 'space-between',
-                            width: '100%',
-                            borderRadius: '5px',
-                            hover: {
-                                backgroundColor: Theme.Theme.colors.three
-                            },
-                            marginBottom: '12px',
-                        }}
-                            onMouseEnter ={  elementIsHover }
-                            onMouseLeave ={  elementNotIsHover}
-                        >
-                            <Text
-                                key = {actualMessage.id}
-                                tag="li"
-                                styleSheet={{
-                                    borderRadius: '5px',
-                                    padding: '6px'
-                                }}
+                        <Box onMouseEnter ={  elementIsHover }
+                            onMouseLeave ={ elementNotIsHover}>
+                            <Box className='box-message' styleSheet={{
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                width: '100%',
+                                borderRadius: '5px',
+                                hover: {
+                                    backgroundColor: Theme.Theme.colors.three
+                                },
+                                marginBottom: '12px',
+                            }}
                             >
-                                <a href={`https://github.com/${actualMessage.whoSended}`}>
-                                    <Box
-                                        styleSheet={{
-                                            marginBottom: '8px',
-                                        }}
-                                    >
-                                    <div>
-                                        <Image
+                                <Text
+                                    key = {actualMessage.id}
+                                    tag="li"
+                                    styleSheet={{
+                                        borderRadius: '5px',
+                                        padding: '6px'
+                                    }}
+                                >
+                                    <a href={`https://github.com/${actualMessage.whoSended}`}>
+                                        <Box
                                             styleSheet={{
-                                                width: '20px',
-                                                height: '20px',
-                                                borderRadius: '50%',
-                                                display: 'inline-block',
-                                                marginRight: '8px',
+                                                marginBottom: '8px',
                                             }}
-                                            src={`https://github.com/${actualMessage.whoSended}.png`}
-                                        />
-                                        <Text tag="strong" styleSheet={{
-                                            display: 'inline-block'
-                                        }}>
-                                            {actualMessage.whoSended}
-                                        </Text>
-                                        <Text
-                                            styleSheet={{
-                                                fontSize: '10px',
-                                                marginLeft: '8px',
-                                                color: appConfig.theme.colors.neutrals[300],
-                                                display: 'inline-block'
-                                            }}
-                                            tag="span"
                                         >
-                                            {(new Date(actualMessage.created_at)).toLocaleString()}
-                                        </Text>
-                                    </div>
-                                    </Box>
-                                </a>
+                                        <div>
+                                            <Image
+                                                styleSheet={{
+                                                    width: '20px',
+                                                    height: '20px',
+                                                    borderRadius: '50%',
+                                                    display: 'inline-block',
+                                                    marginRight: '8px',
+                                                }}
+                                                src={`https://github.com/${actualMessage.whoSended}.png`}
+                                            />
+                                            <Text tag="strong" styleSheet={{
+                                                display: 'inline-block'
+                                            }}>
+                                                {actualMessage.whoSended}
+                                            </Text>
+                                            <Text
+                                                styleSheet={{
+                                                    fontSize: '10px',
+                                                    marginLeft: '8px',
+                                                    color: appConfig.theme.colors.neutrals[300],
+                                                    display: 'inline-block'
+                                                }}
+                                                tag="span"
+                                            >
+                                                {(new Date(actualMessage.created_at)).toLocaleString()}
+                                            </Text>
+                                        </div>
+                                        </Box>
+                                    </a>
 
-                                {actualMessage.text.startsWith(':sticker:') 
-                                ?
-                                (
-                                    <Image src={actualMessage.text.replace(':sticker:', '')} styleSheet={{
-                                        maxWidth:'200px', width: '100%'
-                                    }}></Image>
-                                ):
-                                   
-                                actualMessage.text}
-                            </Text>
-                        {actualMessage.whoSended == props.userLogged ? 
-                            <DeleteButton id={actualMessage.id} ></DeleteButton> 
-                        : '' }
+                                    {actualMessage.text.startsWith(':sticker:') 
+                                    ?
+                                    (
+                                        <Image src={actualMessage.text.replace(':sticker:', '')} styleSheet={{
+                                            maxWidth:'200px', width: '100%'
+                                        }}></Image>
+                                    ):
+                                    
+                                    actualMessage.text}
+                                </Text>
+                            {actualMessage.whoSended == props.userLogged ? 
+                                <DeleteButton id={actualMessage.id} ></DeleteButton> 
+                            : '' }
+                       </Box>
                      </Box>
                     )
                 })
