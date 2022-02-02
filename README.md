@@ -47,9 +47,12 @@ $ yarn dev
 
 ###
 
-## ☄Resultado
+# ☄Resultado
 
 <p>A página está hospedada na Vercel, <a href='aluracord-she-ra.vercel.app'>aqui</a></p>
+
+![https___aluracord-she-ra vercel app-Google-Chrome-2022-02-01-21-21-59_Trim](https://user-images.githubusercontent.com/84740942/152082445-8ba134af-87f9-427a-ade9-8dc2ce18569f.gif)
+
 
 ## 💡Tecnologias Utilizadas
 <a href='https://developer.mozilla.org/pt-BR/docs/Web/HTML'><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-original.svg" alt='logo do HTML em laranja' width ='60' height='60'/></a><a href='https://developer.mozilla.org/pt-BR/docs/Web/CSS'><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/css3/css3-original.svg" alt='logo do CSS em azul'  width ='60' height='60'/></a><a href='https://developer.mozilla.org/pt-BR/docs/Web/JavaScript'><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg" alt='logo do JavaScript em amarelo'  width ='60' height='60' /></a>
