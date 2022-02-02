@@ -6,7 +6,7 @@ Tabela de conteúdos
    * [Descrição do projeto](#descrição-do-projeto)
    * [Status](#status)
    * [Instalação](#instalação)
-   * [Desenvolvimento](#desenvolvimento)
+   * [Aprendizados](#aprendizados)
    * [Resultado](#resultado)
    * [Tecnologias Utilizadas](#tecnologias-utilizadas)
    * [Author](#author)
@@ -38,10 +38,6 @@ $ yarn add @supabase/supabase-js
 #Rode o projeto localmente
 $ yarn dev
 ```
-
-## 💻Desenvolvimento 
-
-###
 
 ## 📘Aprendizados
 
