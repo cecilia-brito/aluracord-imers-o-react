@@ -18,7 +18,7 @@ Tabela de conteúdos
 
 ## 🕗Status
 
-<p>Em andamento...🚀</p>
+<p>Concluído🌟</p>
 
 ## 💾Instalação
 
