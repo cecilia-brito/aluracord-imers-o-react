@@ -41,6 +41,15 @@ $ yarn dev
 
 ## 📘Aprendizados
 
+<ul>
+  <li>Componentes React</li>
+  <li>React Hooks: State, Route</li>
+  <li>Requisões e consumo de Api com axios</li>
+  <li>Noções de Context React</li>
+  <li>Assync Functions</li>
+  <li>Noções dos métodos Map e Filter</li>
+</uL>
+
 ###
 
 # ☄Resultado
